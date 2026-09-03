@@ -126,7 +126,7 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
   <!-- ===================== RELATÓRIOS DO MÊS ===================== -->
   <div class="card">
     <div class="section-title">Relatórios do Mês → Importações</div>
-    <div class="help">Solte aqui os relatórios do mês — cada campo lê o seu sozinho e fica pronto pra qualquer uma das 4 seções abaixo (Baixa de Entradas, Baixa de Serviços, Notas Fiscais de Serviço, Lançamentos Manuais) usar. O extrato bancário é único, compartilhado por todas.</div>
+    <div class="help">Solte aqui os relatórios do mês — cada campo lê o seu sozinho e fica pronto pra qualquer uma das 4 seções abaixo (Baixa de Entradas, Baixa de Serviços, Notas Fiscais de Serviço, Lançamentos Manuais) usar. O extrato bancário é único, compartilhado por todas. O CNPJ de clientes/fornecedores resolve sozinho pelo cadastro compartilhado do Hub (mesmo banco da Conversões Cibele, Baixas de Parcelas etc.) — não precisa subir relatório de Clientes/Fornecedores aqui.</div>
     <div class="field-row">
       <div class="field">
         <label>Aplicação Financeira SICREDI (PDF)</label>
@@ -144,13 +144,8 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
         <label>Extrato Bancário (Excel)</label>
         <div class="dropzone small-drop" id="extratoDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Colunas Data / Descrição / Movimentação — único pras 4 seções</div><input type="file" id="extratoFile" accept=".xlsx,.xls"></div>
       </div>
-      <div class="field">
-        <label>Cadastro Clientes/Fornecedores (PDF, opcional)</label>
-        <div class="dropzone small-drop" id="cadPdfDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Só se precisar atualizar o CNPJ compartilhado do Hub</div><input type="file" id="cadPdfFile" accept="application/pdf"></div>
-      </div>
     </div>
     <div id="aplicUploadStatus" class="status-line hidden"></div>
-    <div id="cadPdfStatus" class="status-line hidden"></div>
   </div>
 
   <!-- ===================== GRUPOS (TÍTULOS) ===================== -->
@@ -187,7 +182,7 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
     <div class="field-row">
       <div class="field"><label>Acumulador (resgates)</label><input type="text" id="nfAcumulador" value="46"></div>
       <div class="field"><label>CFPS (resgates)</label><input type="text" id="nfCfps" value="9101"></div>
-      <div class="field"><label>CNPJ padrão (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraCnpjPadrao" value="04.443.827/0001-20"></div>
+      <div class="field"><label>CNPJ padrão (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraCnpjPadrao" value="123"></div>
       <div class="field"><label>Acumulador (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraAcumulador" value="2"></div>
       <div class="field"><label>CFPS (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraCfps" value="9102"></div>
     </div>
@@ -1559,19 +1554,6 @@ async function importarCadastroPdf(f){
   if(window.gladiusCloud) window.gladiusCloud.pushManyClientes(dirty);
   return `Cadastro atualizado: ${addedCli} registro(s) novo(s), ${updatedCod} código(s) vinculado(s).`;
 }
-wireDropzone("cadPdfDrop","cadPdfFile", async (f,d)=>{
-  const status = document.getElementById("cadPdfStatus");
-  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo PDF...";
-  try{
-    const msg = await importarCadastroPdf(f);
-    status.classList.add("ok");
-    status.textContent = msg + " Reprocessando...";
-    if(baixaRowsState.length) processarBaixaServicos();
-    if(entradasRowsState.length) processarEntradas();
-  }catch(err){
-    status.classList.add("err"); status.textContent = "Erro: " + err.message;
-  }
-});
 
 </script>
 
