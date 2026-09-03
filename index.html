@@ -313,6 +313,9 @@ function excelDateToParts(serial){
 }
 function lastDayOfMonth(ano, mes){ return {y:ano, m:mes, d:new Date(Date.UTC(ano, mes, 0)).getUTCDate()}; }
 const MESES_PT = ["JANEIRO","FEVEREIRO","MARCO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+// CNPJ do Banco Cooperativo Sicredi S.A. — tomador das Notas de Serviço do
+// acumulador 46 (resgates de aplicação financeira).
+const SICREDI_CNPJ = "01.181.521/0001-55";
 
 function mod11Digit(nums, weights){
   let total = 0;
@@ -498,7 +501,7 @@ function parseCarteiraPdf(allLines, fileName){
     id: "g"+Math.random().toString(36).slice(2,9),
     arquivo: fileName, tipo: "carteira", titulo, produto,
     contaAplicacao: detectarContaPorProduto(produto),
-    nome: "", cnpj: "",
+    nome: "", cnpj: SICREDI_CNPJ,
     aportes,
     buckets: Object.keys(buckets).map(k=>({key:k, ...buckets[k], resgates: buckets[k].resgates||[]})),
   };
@@ -534,7 +537,7 @@ function parseConsolidadoPdf(fullText, fileName){
     id: "g"+Math.random().toString(36).slice(2,9),
     arquivo: fileName, tipo: "consolidado", titulo: "", produto,
     contaAplicacao: detectarContaPorProduto(produto) || "1249",
-    nome: "", cnpj: "",
+    nome: "", cnpj: SICREDI_CNPJ,
     periodo: {mes, ano},
     dataFechamento,
     aportes: (aplicValor>0 && dataFechamento) ? [{tipo:"aporte", data:dataFechamento, valor:aplicValor}] : [],
@@ -679,7 +682,7 @@ function gerarNotasFiscais(){
       const base = b.irrf ? (b.irrf/0.15) : 0;
       const liquido = b.capitalizacao - (b.irrf||0);
       nfRowsState.push({
-        data: dataRef, nome, cnpj:g.cnpj||"",
+        data: dataRef, nome, cnpj: g.cnpj || SICREDI_CNPJ,
         valorServico: b.capitalizacao, irrf: b.irrf||0, base, liquido,
         acumulador: document.getElementById("nfAcumulador").value.trim(),
         cfps: document.getElementById("nfCfps").value.trim(),
