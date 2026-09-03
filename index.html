@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lançamentos Gladius</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#1A1A1A;
+  --ink-soft:#65656B;
+  --paper:#E7E6E2;
+  --paper-raised:#FFFFFF;
+  --rule:#D6D5D1;
+  --rule-strong:#A9A7A2;
+  --red:#A6392C;
+  --red-bg:#F6E1DC;
+  --green-ink:#1F5E3C;
+  --green-bg:#DEEEE3;
+  --amber:#8A6400;
+  --amber-bg:#FCEEA9;
+  --accent:#2B4C7E;
+  --accent-bg:#DDE6F2;
+  --shadow: 0 1px 2px rgba(0,0,0,0.06), 0 4px 14px rgba(0,0,0,0.06);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.app{max-width:1280px;margin:0 auto;padding:28px 20px 80px;}
+
+.topbar{padding-bottom:18px;margin-bottom:22px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;}
+.brand h1{font-family:'Source Serif 4',serif;font-size:26px;font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;}
+.brand .sub{font-size:13px;color:var(--ink-soft);max-width:720px;}
+.backlink{font-size:12.5px;color:var(--ink-soft);text-decoration:none;border-bottom:1px dotted var(--ink-soft);}
+.backlink:hover{color:var(--ink);}
+.cricon-brand{display:flex;align-items:center;gap:8px;}
+.cricon-brand svg{width:28px;height:auto;flex-shrink:0;}
+.cricon-brand .cw{line-height:1.05;text-align:right;}
+.cricon-brand .cw .nm{font-family:'Source Serif 4',serif;font-style:italic;font-weight:700;font-size:14px;color:#5D4232;white-space:nowrap;}
+.cricon-brand .cw .tg{font-family:'IBM Plex Sans',sans-serif;font-size:9px;color:var(--ink-soft);letter-spacing:.02em;white-space:nowrap;}
+
+.card{background:var(--paper-raised);border:1.5px solid var(--ink);border-radius:6px;box-shadow:var(--shadow);padding:20px;margin-bottom:20px;}
+
+.dropzone{border:2px dashed var(--rule-strong);border-radius:6px;padding:24px 14px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s;}
+.dropzone:hover,.dropzone.drag{background:rgba(0,0,0,0.03);border-color:var(--ink);}
+.dropzone .big{font-size:13.5px;font-weight:600;margin-bottom:4px;}
+.dropzone .small{font-size:11.5px;color:var(--ink-soft);}
+.dropzone.done{border-style:solid;border-color:var(--green-ink);background:var(--green-bg);}
+.dropzone.small-drop{padding:16px;}
+input[type=file]{display:none;}
+
+.field-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px;}
+.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:4px;font-family:'IBM Plex Mono',monospace;}
+.field input,.field select{width:100%;padding:7px 9px;border:1.5px solid var(--rule-strong);border-radius:4px;font-size:13.5px;font-family:'IBM Plex Mono',monospace;background:var(--paper-raised);color:var(--ink);}
+.field input:focus,.field select:focus{outline:none;border-color:var(--ink);}
+
+.btn{padding:9px 16px;border-radius:4px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;font-weight:600;font-size:13.5px;transition:transform .08s ease,opacity .15s;font-family:'IBM Plex Sans',sans-serif;}
+.btn:hover{opacity:.88;}
+.btn:active{transform:translateY(1px);}
+.btn.ghost{background:transparent;color:var(--ink);}
+.btn.ghost:hover{background:rgba(0,0,0,0.06);}
+.btn.small{padding:5px 10px;font-size:12px;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+.status-line{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-soft);margin-top:10px;white-space:pre-wrap;}
+.status-line.err{color:var(--red);}
+.status-line.ok{color:var(--green-ink);}
+
+.badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.03em;padding:2px 8px;border-radius:10px;font-weight:600;}
+.badge.ok{background:var(--green-bg);color:var(--green-ink);}
+.badge.warn{background:var(--amber-bg);color:var(--amber);}
+.badge.err{background:var(--red-bg);color:var(--red);}
+.badge.info{background:var(--accent-bg);color:var(--accent);}
+
+.summary-row{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;font-size:13px;}
+.summary-row .item .k{color:var(--ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:.03em;font-family:'IBM Plex Mono',monospace;}
+.summary-row .item .v{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;}
+
+table.preview{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+table.preview th{text-align:left;padding:7px 8px;border-bottom:1.5px solid var(--rule-strong);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);position:sticky;top:0;background:var(--paper-raised);white-space:nowrap;}
+table.preview td{padding:6px 8px;border-bottom:1px solid var(--rule);vertical-align:top;}
+table.preview td.num{text-align:right;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+table.preview tr.flag{background:var(--amber-bg);}
+table.preview tr.warn{background:var(--amber-bg);}
+table.preview tr.err{background:var(--red-bg);}
+table.preview tr.excluded{opacity:.4;}
+.table-wrap{max-height:480px;overflow:auto;border:1px solid var(--rule);border-radius:4px;}
+.cell-input{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 5px;border:1.5px solid transparent;border-radius:3px;background:transparent;width:100%;min-width:70px;color:var(--ink);}
+.cell-input:hover{border-color:var(--rule-strong);}
+.cell-input:focus{outline:none;border-color:var(--ink);background:var(--paper-raised);}
+.cell-input.num{text-align:right;font-weight:600;}
+.cell-input.wide{min-width:190px;}
+td.cell{padding:2px 4px;}
+
+.hidden{display:none !important;}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin:0 0 12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
+.help{font-size:12px;color:var(--ink-soft);line-height:1.5;margin-bottom:14px;}
+.help b{color:var(--ink);}
+footer{margin-top:30px;font-size:11.5px;color:var(--ink-soft);text-align:center;}
+code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <h1>Lançamentos Gladius</h1>
+      <div class="sub">Processamento 100% local no navegador — lê os relatórios de aplicação financeira SICREDI (Posição da Carteira / Resgate Fácil, e o extrato consolidado Taxa Selic) e gera os lançamentos contábeis + a Nota de Serviço dos resgates pro Domínio; também casa o Contas a Receber por Cliente com o extrato bancário pra gerar a baixa de serviços. O cadastro de CNPJ é compartilhado com as outras ferramentas do escritório <span id="cloudStatus" class="badge info">Conectando…</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <a class="backlink" href="https://criconcontabilidade.github.io/Cricon-Ferramentas/" onclick="window.close(); setTimeout(function(){ location.href='https://criconcontabilidade.github.io/Cricon-Ferramentas/'; }, 250); return false;" id="hubLink">← Hub de Ferramentas</a>
+      <div class="cricon-brand">
+        <svg viewBox="0 0 141 109" xmlns="http://www.w3.org/2000/svg"><path d="M 15.33 33.25 L 9.50 52.58 L 11.33 74.33 L 19.08 90.67 L 36.17 102.92 L 57.25 104.92 L 73.25 100.08 L 84.92 104.83 L 100.25 104.83 L 115.75 97.92 L 126.00 85.67 L 129.92 74.17 L 130.25 61.92 L 60.92 62.08 L 62.42 49.00 L 130.58 48.75 L 129.92 37.75 L 126.75 29.75 L 118.33 20.33 L 111.42 16.33 L 97.92 12.75 L 88.58 12.67 L 72.58 18.17 L 59.83 13.67 L 41.33 13.58 L 26.42 20.42 Z M 78.58 93.58 L 86.00 80.08 L 86.00 78.42 L 87.00 77.08 L 87.00 74.33 L 87.92 72.75 L 88.33 69.50 L 120.42 69.42 L 121.00 69.92 L 121.08 74.17 L 120.17 75.42 L 120.08 77.17 L 119.25 78.25 L 119.25 79.58 L 117.33 83.67 L 115.83 85.17 L 114.75 87.33 L 111.33 90.75 L 109.25 91.75 L 108.08 92.92 L 102.33 95.92 L 100.33 96.00 L 98.50 97.00 L 85.58 97.00 L 84.42 96.00 L 82.58 95.92 Z M 62.33 69.50 L 78.42 69.42 L 79.25 70.08 L 79.25 70.92 L 78.33 72.58 L 78.33 74.25 L 77.42 75.42 L 77.42 77.00 L 76.50 78.25 L 76.58 79.67 L 76.00 80.33 L 75.58 81.67 L 74.92 82.33 L 74.67 83.58 L 73.92 84.33 L 73.58 85.50 L 71.67 87.58 L 71.17 87.50 L 70.75 87.00 L 69.92 86.67 L 69.00 85.25 L 66.75 82.83 L 66.25 81.42 L 63.83 77.00 L 63.75 75.25 L 62.83 74.17 L 62.83 71.67 L 61.92 70.58 L 61.92 69.92 Z M 20.17 69.75 L 20.58 69.42 L 52.00 69.67 L 52.83 70.58 L 53.17 72.50 L 54.08 73.67 L 54.17 75.50 L 55.08 76.50 L 55.00 78.17 L 56.00 80.75 L 59.67 86.42 L 60.00 87.83 L 61.58 89.33 L 61.83 90.58 L 63.50 92.33 L 63.42 93.75 L 62.58 94.83 L 61.33 95.08 L 60.33 96.00 L 58.42 96.08 L 57.42 97.00 L 43.83 97.00 L 42.58 96.00 L 41.00 96.00 L 39.75 95.08 L 38.42 95.08 L 36.25 94.08 L 34.75 92.67 L 30.33 90.25 L 26.67 86.50 L 26.42 85.33 L 23.08 81.00 L 22.83 79.08 L 21.00 76.25 L 20.92 73.83 L 20.00 72.50 Z M 19.08 50.08 L 20.42 49.00 L 51.83 49.08 L 52.33 49.58 L 52.25 55.25 L 51.42 57.83 L 51.42 61.17 L 50.67 61.83 L 18.58 61.83 L 18.08 61.33 L 18.08 58.58 L 19.08 56.17 Z M 72.67 28.83 L 75.50 31.67 L 76.58 33.58 L 77.42 34.58 L 77.58 36.42 L 78.42 37.50 L 78.33 38.92 L 79.33 40.33 L 79.25 41.00 L 78.50 41.42 L 65.25 41.33 L 64.67 40.58 L 64.58 39.67 L 65.42 38.50 L 65.67 37.42 L 66.42 36.50 L 66.58 35.50 L 68.00 33.92 L 68.50 32.58 L 72.00 29.00 Z M 80.17 23.67 L 81.50 22.33 L 82.75 22.00 L 83.75 21.17 L 85.50 21.08 L 86.58 20.17 L 99.25 20.17 L 100.33 21.08 L 103.00 21.17 L 104.25 22.08 L 107.75 23.08 L 109.42 24.67 L 112.67 26.00 L 117.08 30.42 L 120.17 35.50 L 120.17 37.00 L 121.17 38.50 L 121.08 40.83 L 120.42 41.42 L 88.50 41.42 L 87.92 40.67 L 87.92 38.33 L 86.92 36.92 L 86.92 34.50 L 86.17 33.75 L 84.75 30.33 L 80.75 25.42 Z M 64.58 23.67 L 63.33 26.33 L 61.08 28.58 L 60.67 29.83 L 59.17 31.33 L 58.75 32.75 L 57.33 34.33 L 56.08 37.00 L 55.92 38.33 L 55.08 39.25 L 55.08 40.75 L 54.42 41.42 L 22.58 41.50 L 22.17 41.17 L 22.92 39.42 L 22.83 38.42 L 26.83 31.42 L 33.17 25.17 L 41.00 21.17 L 43.58 21.08 L 44.75 20.17 L 57.50 20.17 L 58.92 21.00 L 60.83 21.17 L 63.08 22.17 Z" fill="#5D4232" fill-rule="evenodd"/></svg>
+        <div class="cw"><div class="nm">Contabilidade Cricon</div><div class="tg">Contabilizando seu sucesso!</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== APLICAÇÃO FINANCEIRA — UPLOAD ===================== -->
+  <div class="card">
+    <div class="section-title">Aplicação Financeira SICREDI — Importação</div>
+    <div class="help">Solte aqui os relatórios <b>Posição da Carteira / Resgate Fácil</b> (um por título — conta 1077) e/ou o extrato <b>Consolidado Taxa Selic</b> (IBPJ Sicredi — conta 1249). Pode soltar vários arquivos de uma vez. Cada um vira um "grupo" abaixo — preencha o <b>Nome</b> (usado no histórico, ex. nome do processo/massa falida) e o <b>CNPJ</b> do cliente antes de gerar os lançamentos.</div>
+    <div class="dropzone" id="aplicDropzone">
+      <div class="big" id="aplicDzBig">Clique ou arraste os PDFs aqui</div>
+      <div class="small">Vários arquivos .pdf de uma vez</div>
+      <input type="file" id="aplicFileInput" accept="application/pdf" multiple>
+    </div>
+    <div id="aplicUploadStatus" class="status-line hidden"></div>
+  </div>
+
+  <!-- ===================== GRUPOS (TÍTULOS) ===================== -->
+  <div class="card hidden" id="boxGrupos">
+    <div class="section-title">Títulos/contas encontrados</div>
+    <div class="help">Confira a conta contábil detectada (1077 Resgate Fácil / 1249 Taxa Selic — troque se estiver errada) e preencha Nome/CNPJ do cliente responsável por cada título antes de gerar os lançamentos.</div>
+    <div class="table-wrap"><table class="preview" id="gruposTable"></table></div>
+    <div class="btn-row">
+      <button class="btn" onclick="gerarLancamentosENF()">Gerar Lançamentos e Nota de Serviço</button>
+    </div>
+    <div id="gruposStatus" class="status-line hidden"></div>
+  </div>
+
+  <!-- ===================== LANÇAMENTOS GERADOS ===================== -->
+  <div class="card hidden" id="boxLancamentos">
+    <div class="section-title">Lançamentos Contábeis — revise antes de exportar</div>
+    <div class="help">Junta os lançamentos da Aplicação Financeira (resgate/aporte/rendimento) com os do Extrato Geral (card mais abaixo) numa tabela só. Edite débito/crédito/valor/histórico clicando na célula.</div>
+    <div class="field-row" style="max-width:320px;">
+      <div class="field"><label>Código Emp. (Domínio)</label><input type="text" id="lancCodEmp" value="9"></div>
+    </div>
+    <div class="table-wrap"><table class="preview" id="lancTable"></table></div>
+    <div class="btn-row">
+      <button class="btn" onclick="downloadLancXlsx()">Baixar lancamentos.xlsx</button>
+      <button class="btn ghost" onclick="downloadLancTxt()">Baixar lanctos.txt</button>
+    </div>
+  </div>
+
+  <!-- ===================== LANÇAMENTOS CONTÁBEIS — EXTRATO GERAL ===================== -->
+  <div class="card">
+    <div class="section-title">Lançamentos Contábeis — Extrato Geral</div>
+    <div class="help">Lê o extrato bancário inteiro e gera as linhas de razão pro Domínio, casando cada lançamento contra o cadastro de padrões abaixo (palavra-chave do histórico → contas). O que não bate com nenhum padrão vira uma linha só com a conta banco (744), marcada pra você completar à mão. Entra na mesma tabela de Lançamentos Contábeis acima, junto com os da Aplicação Financeira.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Extrato bancário (Excel)</label>
+        <div class="dropzone small-drop" id="extratoGeralDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Colunas Data / Descrição / Movimentação</div><input type="file" id="extratoGeralFile" accept=".xlsx,.xls"></div>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn" id="processLancGeralBtn" disabled onclick="processarLancamentosExtrato()">Processar</button></div>
+    <div id="lancGeralStatus" class="status-line hidden"></div>
+  </div>
+
+  <!-- ===================== CADASTRO: LANÇAMENTOS PADRÕES ===================== -->
+  <div class="card">
+    <div class="section-title">Cadastro — Lançamentos Padrões (Extrato Geral)</div>
+    <div class="help">De-para de palavra(s)-chave do histórico → conta contábil + histórico de saída, aplicado sozinho pra qualquer débito/crédito do extrato. A direção (Débito/Crédito de cada conta) é decidida pelo sinal real da transação no banco, não fixa no cadastro — assim funciona igual pra pagamento e eventual estorno/devolução do mesmo tipo. Padrões com valores fixos (aluguel), lançamento-espelho (distribuição de lucros → provisão) ou rótulo de mês dinâmico (condomínio, 2ª ocorrência do mesmo prédio no período usa mês atual em vez de anterior) só são editáveis via JSON.</div>
+    <div class="table-wrap"><table class="preview" id="padroesTable"></table></div>
+    <div class="btn-row">
+      <button class="btn ghost" onclick="togglePadroesJson()">Editar via JSON</button>
+    </div>
+    <div id="padroesJsonBox" class="hidden" style="margin-top:10px;">
+      <textarea id="padroesJsonArea" style="width:100%;min-height:260px;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px;border:1.5px solid var(--rule-strong);border-radius:4px;"></textarea>
+      <div class="btn-row"><button class="btn small" onclick="salvarPadroesJson()">Salvar</button></div>
+      <div id="padroesJsonStatus" class="status-line hidden"></div>
+    </div>
+  </div>
+
+  <!-- ===================== NOTA DE SERVIÇO GERADA ===================== -->
+  <div class="card hidden" id="boxNF">
+    <div class="section-title">Nota de Serviço — revise antes de exportar</div>
+    <div class="help">Junta as notas dos resgates de aplicação (Acumulador/CFPS/CNPJ vêm dos campos abaixo, no momento em que são geradas) com as notas de recebimentos do extrato (Alvará/Honorários/Aluguel, card mais abaixo). Cada linha já traz seu próprio Acumulador/CFPS/CNPJ — editáveis depois de gerada. Número da NF fica em branco — preencha antes de importar no Domínio.</div>
+    <div class="field-row" style="max-width:420px;">
+      <div class="field"><label>Acumulador (resgates)</label><input type="text" id="nfAcumulador" value="46"></div>
+      <div class="field"><label>CFPS (resgates)</label><input type="text" id="nfCfps" value="9101"></div>
+    </div>
+    <div class="table-wrap"><table class="preview" id="nfTable"></table></div>
+    <div class="btn-row">
+      <button class="btn" onclick="downloadNFXlsx()">Baixar NFS.xlsx</button>
+      <button class="btn ghost" onclick="downloadNFTxt()">Baixar NFS.txt</button>
+    </div>
+  </div>
+
+  <!-- ===================== NF — RECEBIMENTOS DO EXTRATO (ALVARÁ/HONORÁRIOS/ALUGUEL) ===================== -->
+  <div class="card">
+    <div class="section-title">Nota de Serviço — Recebimentos do Extrato (Alvará/Honorários/Aluguel)</div>
+    <div class="help">Lê o extrato bancário e detecta sozinho as linhas com "Alvará", "Honorários" ou "Aluguel" na descrição — cada uma vira uma Nota de Serviço pelo valor recebido (edite o valor quando a nota for por um valor diferente do total da transação, ex. um recebimento que mistura mais de uma coisa). Linhas a débito (ex. devolução de aluguel) vêm desmarcadas por padrão — confira o valor certo antes de marcar. CNPJ/Acumulador/CFPS abaixo são o padrão aplicado às linhas marcadas; edite por linha depois de adicionar.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Extrato bancário (Excel)</label>
+        <div class="dropzone small-drop" id="extratoAlvaraDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Mesmo formato Data / Descrição / Movimentação</div><input type="file" id="extratoAlvaraFile" accept=".xlsx,.xls"></div>
+      </div>
+    </div>
+    <div class="field-row" style="max-width:640px;">
+      <div class="field"><label>CNPJ padrão do cliente</label><input type="text" id="alvaraCnpjPadrao" value="04.443.827/0001-20"></div>
+      <div class="field"><label>Acumulador</label><input type="text" id="alvaraAcumulador" value="2"></div>
+      <div class="field"><label>CFPS</label><input type="text" id="alvaraCfps" value="9102"></div>
+    </div>
+    <div id="boxAlvaraTabela" class="hidden">
+      <div class="table-wrap"><table class="preview" id="alvaraTable"></table></div>
+      <div class="btn-row"><button class="btn" onclick="adicionarAlvaraNF()">Adicionar linhas marcadas à Nota de Serviço</button></div>
+    </div>
+    <div id="alvaraStatus" class="status-line hidden"></div>
+  </div>
+
+  <!-- ===================== BAIXA DE SERVIÇOS ===================== -->
+  <div class="card">
+    <div class="section-title">Baixa de Serviços</div>
+    <div class="help">Casa o relatório <b>Contas a Receber por Cliente</b> do Domínio com o extrato bancário — reconhece o número da nota direto no histórico do extrato (ex. "Recebimento NF 115 ..."), sem chute por valor/data. As parcelas do relatório podem já estar com Situação "Recebida" (baixadas fora do Domínio) — a ferramenta trata todas como se estivessem em aberto, pra reconhecer o que efetivamente entrou no banco no mês. O cadastro de CNPJ é o mesmo compartilhado com o resto do escritório.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Contas a Receber por Cliente (PDF)</label>
+        <div class="dropzone small-drop" id="contasDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Lê sozinho a empresa (CNPJ) do cabeçalho do relatório</div><input type="file" id="contasFile" accept="application/pdf"></div>
+      </div>
+      <div class="field">
+        <label>Extrato bancário (Excel)</label>
+        <div class="dropzone small-drop" id="extratoDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Colunas Data / Descrição / Movimentação (ou Saldo)</div><input type="file" id="extratoFile" accept=".xlsx,.xls"></div>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn" id="processBaixaBtn" disabled onclick="processarBaixaServicos()">Processar</button></div>
+    <div id="baixaStatus" class="status-line hidden"></div>
+  </div>
+
+  <div class="card hidden" id="resultBaixaCard"></div>
+
+  <!-- ===================== BAIXA DE ENTRADAS ===================== -->
+  <div class="card">
+    <div class="section-title">Baixa de Entradas</div>
+    <div class="help">Casa os débitos do extrato bancário com o relatório <b>Contas a Pagar por Fornecedor</b> — diferente da Baixa de Serviços, o extrato aqui não cita o número da nota nem sempre o nome do fornecedor de forma confiável (ex. "Pagto NF Burn" pra um fornecedor cadastrado como "Ferreira Serviços..."), então o casamento é por <b>valor exato</b> dentro de uma janela de dias entre vencimento e pagamento — nunca aproxima. Um pagamento nunca mistura títulos de fornecedores diferentes. As parcelas do relatório podem já estar "Paga" — a ferramenta trata todas como candidatas, pra reconhecer o que foi pago no mês.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Contas a Pagar por Fornecedor (PDF)</label>
+        <div class="dropzone small-drop" id="contasPagarDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Lê sozinho a empresa (CNPJ) do cabeçalho do relatório</div><input type="file" id="contasPagarFile" accept="application/pdf"></div>
+      </div>
+      <div class="field">
+        <label>Extrato bancário (Excel)</label>
+        <div class="dropzone small-drop" id="extratoEntradasDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Considera só os débitos (valores negativos)</div><input type="file" id="extratoEntradasFile" accept=".xlsx,.xls"></div>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn" id="processEntradasBtn" disabled onclick="processarEntradas()">Processar</button></div>
+    <div id="entradasStatus" class="status-line hidden"></div>
+  </div>
+
+  <div class="card hidden" id="resultEntradasCard"></div>
+
+  <!-- ===================== CADASTRO CNPJ (fallback) ===================== -->
+  <div class="card">
+    <div class="section-title">CNPJs não encontrados — importar cadastro</div>
+    <div class="help">Solte aqui o relatório de <b>Clientes</b> ou <b>Fornecedores</b> do Domínio da Gladius — atualiza o cadastro compartilhado do escritório (mesmo banco usado pela Conversões Cibele, Baixas de Parcelas etc.) e já resolve as linhas pendentes na hora.</div>
+    <div class="dropzone small-drop" id="cadPdfDrop"><div class="big">Arraste o PDF de Clientes/Fornecedores aqui</div><input type="file" id="cadPdfFile" accept="application/pdf"></div>
+    <div id="cadPdfStatus" class="status-line hidden"></div>
+  </div>
+
+  <footer>Lançamentos Gladius · Cricon Contabilidade — uso interno</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+/* Navegação por teclado (padrão em todas as ferramentas): dentro de uma
+   tabela editável, seta cima/baixo e Enter movem o foco para o mesmo campo
+   (mesma coluna) na linha anterior/seguinte, como no Excel. */
+document.addEventListener("keydown", function(e){
+  if(e.key!=="ArrowUp" && e.key!=="ArrowDown" && e.key!=="Enter") return;
+  const alvo = e.target;
+  if(!alvo.matches || !alvo.matches("input, select, textarea")) return;
+  if(alvo.tagName==="TEXTAREA" && e.key==="Enter") return;
+  const celula = alvo.closest("td, th");
+  if(!celula) return;
+  const linha = celula.parentElement;
+  const indiceCelula = Array.prototype.indexOf.call(linha.children, celula);
+  const corpo = linha.parentElement;
+  const linhas = Array.prototype.filter.call(corpo.children, l => l.tagName==="TR");
+  const indiceLinha = linhas.indexOf(linha);
+  const linhaAlvo = e.key==="ArrowUp" ? linhas[indiceLinha-1] : linhas[indiceLinha+1];
+  if(!linhaAlvo) return;
+  const celulaAlvo = linhaAlvo.children[indiceCelula];
+  if(!celulaAlvo) return;
+  const campo = celulaAlvo.querySelector("input, select, textarea");
+  if(!campo) return;
+  e.preventDefault();
+  campo.focus();
+  if(campo.select) campo.select();
+});
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+/* =========================================================================
+   HELPERS: valores / datas / documento / download
+   ========================================================================= */
+function onlyDigits(s){ return (s||"").toString().replace(/\D/g,""); }
+function normalizeText(s){ return (s||"").toString().normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().trim(); }
+function stripAccents(s){ return String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,""); }
+function parseBRL(str){
+  if(str==null) return null;
+  str = String(str).trim();
+  if(str==="" || str==="-" || str==="–") return null;
+  const neg = /^-/.test(str) || /^\(.*\)$/.test(str);
+  str = str.replace(/[()\-]/g,"").replace(/R\$/g,"").replace(/\s+/g,"").replace(/\./g,"").replace(",",".").trim();
+  const n = parseFloat(str);
+  if(isNaN(n)) return null;
+  return neg ? -n : n;
+}
+function fmtBRL(n){
+  if(n==null || isNaN(n)) return "";
+  return n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtValorTxt(n){
+  if(n==null || n==="" || isNaN(n)) return "0";
+  const r = Math.round(Number(n)*100)/100;
+  if(r === 0) return "0";
+  if(Number.isInteger(r)) return String(r);
+  return r.toFixed(2).replace(".",",");
+}
+function brDateToParts(str){
+  const m = String(str).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(!m) return null;
+  let [_,dd,mm,yy] = m;
+  if(yy.length===2) yy = (parseInt(yy)>50 ? "19":"20")+yy;
+  return {y:parseInt(yy), m:parseInt(mm), d:parseInt(dd)};
+}
+function fmtDateBR(dt){ return dt ? `${String(dt.d).padStart(2,"0")}/${String(dt.m).padStart(2,"0")}/${dt.y}` : ""; }
+function partsToDate(dt){ return new Date(Date.UTC(dt.y, dt.m-1, dt.d)); }
+function excelDateToParts(serial){
+  const ms = serial*86400000 + Date.UTC(1899,11,30);
+  const dt = new Date(ms);
+  return {y:dt.getUTCFullYear(), m:dt.getUTCMonth()+1, d:dt.getUTCDate()};
+}
+function lastDayOfMonth(ano, mes){ return {y:ano, m:mes, d:new Date(Date.UTC(ano, mes, 0)).getUTCDate()}; }
+const MESES_PT = ["JANEIRO","FEVEREIRO","MARCO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+
+function mod11Digit(nums, weights){
+  let total = 0;
+  for(let i=0;i<nums.length;i++) total += nums[i]*weights[i];
+  const r = total % 11;
+  return r<2 ? 0 : 11-r;
+}
+function isValidCPF(digits){
+  const d = onlyDigits(digits);
+  if(d.length!==11 || /^(\d)\1{10}$/.test(d)) return false;
+  const nums = d.split("").map(Number);
+  const dv1 = mod11Digit(nums.slice(0,9), [10,9,8,7,6,5,4,3,2]);
+  const dv2 = mod11Digit(nums.slice(0,9).concat([dv1]), [11,10,9,8,7,6,5,4,3,2]);
+  return nums[9]===dv1 && nums[10]===dv2;
+}
+function isValidCNPJ(digits){
+  const d = onlyDigits(digits);
+  if(d.length!==14 || /^(\d)\1{13}$/.test(d)) return false;
+  const nums = d.split("").map(Number);
+  const w1 = [5,4,3,2,9,8,7,6,5,4,3,2];
+  const w2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+  const dv1 = mod11Digit(nums.slice(0,12), w1);
+  const dv2 = mod11Digit(nums.slice(0,12).concat([dv1]), w2);
+  return nums[12]===dv1 && nums[13]===dv2;
+}
+function classifyDocumento(digits){
+  const d = onlyDigits(digits);
+  if(d.length===14) return {tipo:"CNPJ", valido:isValidCNPJ(d)};
+  if(d.length===11) return {tipo:"CPF", valido:isValidCPF(d)};
+  return {tipo:null, valido:false};
+}
+function formatCnpjCpf(raw){
+  const d = onlyDigits(raw);
+  if(d.length===14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+  if(d.length===11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  return (raw||"").toString().trim();
+}
+
+function downloadText(filename, content, mime){
+  const blob = new Blob([content], {type: mime||"text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+// O Domínio lê os TXT de importação como ANSI (Windows-1252) — converte char a char.
+function downloadTextAnsi(filename, content){
+  const bytes = new Uint8Array(content.length);
+  for(let i=0;i<content.length;i++){
+    const code = content.charCodeAt(i);
+    bytes[i] = code <= 0xFF ? code : 0x3F;
+  }
+  const blob = new Blob([bytes], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function downloadXlsx(filename, rowsAoA, sheetName){
+  const ws = XLSX.utils.aoa_to_sheet(rowsAoA);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName||"Sheet1");
+  XLSX.writeFile(wb, filename);
+}
+
+function wireDropzone(dropId, inputId, onFile){
+  const drop = document.getElementById(dropId);
+  const input = document.getElementById(inputId);
+  drop.addEventListener("click", ()=>input.click());
+  input.addEventListener("change", ()=>{ if(input.files[0]) onFile(input.files[0], drop); });
+  drop.addEventListener("dragover", e=>{ e.preventDefault(); drop.classList.add("drag"); });
+  drop.addEventListener("dragleave", ()=> drop.classList.remove("drag"));
+  drop.addEventListener("drop", e=>{
+    e.preventDefault(); drop.classList.remove("drag");
+    if(e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0], drop);
+  });
+}
+function wireDropzoneMulti(dropId, inputId, onFiles){
+  const drop = document.getElementById(dropId);
+  const input = document.getElementById(inputId);
+  drop.addEventListener("click", ()=>input.click());
+  input.addEventListener("change", ()=>{ if(input.files.length) onFiles([...input.files], drop); });
+  drop.addEventListener("dragover", e=>{ e.preventDefault(); drop.classList.add("drag"); });
+  drop.addEventListener("dragleave", ()=> drop.classList.remove("drag"));
+  drop.addEventListener("drop", e=>{
+    e.preventDefault(); drop.classList.remove("drag");
+    if(e.dataTransfer.files.length) onFiles([...e.dataTransfer.files], drop);
+  });
+}
+function markDropDone(drop, label){
+  drop.classList.add("done");
+  drop.querySelector(".big").textContent = "✓ " + label;
+}
+
+/* =========================================================================
+   PDF: extração de linhas de texto (agrupadas por Y, ordenadas por X)
+   ========================================================================= */
+async function extractPdfPageLines(pdf, pageNum){
+  const page = await pdf.getPage(pageNum);
+  const content = await page.getTextContent();
+  const Y_TOL = 1.5;
+  const items = content.items.map(it=>({y:it.transform[5], x:it.transform[4], text:it.str}))
+    .sort((a,b)=> b.y-a.y);
+  const rows = [];
+  items.forEach(it=>{
+    let row = rows.find(r=> Math.abs(r.y - it.y) <= Y_TOL);
+    if(!row){ row = {y:it.y, items:[]}; rows.push(row); }
+    row.items.push(it);
+  });
+  rows.sort((a,b)=> b.y-a.y);
+  return rows.map(r=> r.items.sort((a,b)=>a.x-b.x).map(t=>t.text).join(" ").replace(/\s+/g," ").trim() ).filter(l=>l.length>0);
+}
+async function extractPdfAllLines(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const pages = [];
+  for(let p=1;p<=pdf.numPages;p++) pages.push(await extractPdfPageLines(pdf, p));
+  return pages;
+}
+
+/* =========================================================================
+   APLICAÇÃO FINANCEIRA — parser "Posição da Carteira" (Resgate Fácil, 1077)
+   ========================================================================= */
+function detectarContaPorProduto(produto){
+  const n = normalizeText(produto||"");
+  if(n.includes("RESGATE FACIL")) return "1077";
+  if(n.includes("TAXA SELIC")) return "1249";
+  return "";
+}
+function parseValoresCD(line){
+  const re = /([\d.,]+)\s*([CD])\b/g;
+  const out = []; let m;
+  while((m = re.exec(line))){ out.push({valor: parseBRL(m[1]), sinal: m[2]}); }
+  return out;
+}
+function parseCarteiraPdf(allLines, fileName){
+  let titulo=null, produto=null;
+  const movs = []; // {tipo, data|{mes,ano}, valor}
+  allLines.forEach(line=>{
+    let m;
+    if((m = line.match(/Titulo\s*\.?:\s*(\S+)\s+Produto\s*\.?:\s*(.+)$/i))){
+      titulo = m[1]; produto = m[2].trim();
+      return;
+    }
+    if(/^SALDO ANTERIOR/i.test(line)) return;
+    const vals = parseValoresCD(line);
+    if(!vals.length) return;
+    const valorMov = vals[0].valor;
+    const dm = line.match(/^(\d{2}\/\d{2}\/\d{4})/);
+    const mm = line.match(/^(\d{2})\/(\d{4})\b/);
+    if(dm && /\bAPLICACAO\b/i.test(line)){
+      movs.push({tipo:"aporte", data:brDateToParts(dm[1]), valor:valorMov});
+    } else if(dm && /\bRESGATE\b/i.test(line)){
+      movs.push({tipo:"resgate", data:brDateToParts(dm[1]), valor:valorMov});
+    } else if(mm && /CAPITALIZACAO DE JUROS/i.test(line)){
+      movs.push({tipo:"capitalizacao", mes:parseInt(mm[1]), ano:parseInt(mm[2]), valor:valorMov});
+    } else if(mm && /IMPOSTO DE RENDA NO MES/i.test(line)){
+      movs.push({tipo:"irrf_mes", mes:parseInt(mm[1]), ano:parseInt(mm[2]), valor:valorMov});
+    } else if(mm && /IOF NO MES/i.test(line)){
+      movs.push({tipo:"iof_mes", mes:parseInt(mm[1]), ano:parseInt(mm[2]), valor:valorMov});
+    }
+  });
+  if(!titulo) return null;
+
+  const aportes = movs.filter(m=>m.tipo==="aporte");
+  const resgates = movs.filter(m=>m.tipo==="resgate");
+  const bucketKey = m => `${m.ano}-${String(m.mes).padStart(2,"0")}`;
+  const buckets = {};
+  movs.filter(m=>["capitalizacao","irrf_mes","iof_mes"].includes(m.tipo)).forEach(m=>{
+    const k = bucketKey(m);
+    if(!buckets[k]) buckets[k] = {mes:m.mes, ano:m.ano, capitalizacao:0, irrf:0, iof:0};
+    if(m.tipo==="capitalizacao") buckets[k].capitalizacao += m.valor;
+    if(m.tipo==="irrf_mes") buckets[k].irrf += m.valor;
+    if(m.tipo==="iof_mes") buckets[k].iof += m.valor;
+  });
+  resgates.forEach(r=>{
+    const k = `${r.data.y}-${String(r.data.m).padStart(2,"0")}`;
+    if(!buckets[k]) buckets[k] = {mes:r.data.m, ano:r.data.y, capitalizacao:0, irrf:0, iof:0};
+    (buckets[k].resgates = buckets[k].resgates||[]).push(r);
+  });
+
+  return {
+    id: "g"+Math.random().toString(36).slice(2,9),
+    arquivo: fileName, tipo: "carteira", titulo, produto,
+    contaAplicacao: detectarContaPorProduto(produto),
+    nome: "", cnpj: "",
+    aportes,
+    buckets: Object.keys(buckets).map(k=>({key:k, ...buckets[k], resgates: buckets[k].resgates||[]})),
+  };
+}
+
+/* =========================================================================
+   APLICAÇÃO FINANCEIRA — parser "Extrato de aplicação ... Consolidado"
+   (relatório IBPJ Sicredi — Taxa Selic, 1249). Baseado em busca por rótulo
+   no texto completo (o layout vem de uma página web impressa em PDF, cujas
+   quebras de linha via pdf.js nem sempre seguem a ordem visual da tabela).
+   ========================================================================= */
+function parseConsolidadoPdf(fullText, fileName){
+  const produtoM = fullText.match(/Produto:\s*([^\n]+?)\s*CNPJ do Fundo/i);
+  const produto = produtoM ? produtoM[1].trim() : "";
+  const periodoM = fullText.match(/Per.odo de Consulta:\s*(\d{2})\/(\d{4})/i);
+  const mes = periodoM ? parseInt(periodoM[1]) : null;
+  const ano = periodoM ? parseInt(periodoM[2]) : null;
+  const rendM = fullText.match(/Rendimentos Per.odo\s+(-?[\d.,]+)/i);
+  const irrfM = fullText.match(/\bIRRF\s+(-?[\d.,]+)/i);
+  const iofM = fullText.match(/\bIOF\s+(-?[\d.,]+)/i);
+  const aplicM = fullText.match(/Aplica..es\s+(-?[\d.,]+)/i);
+  const resgM = fullText.match(/\bResgates\s+(-?[\d.,]+)/i);
+  const datasFechamento = [...fullText.matchAll(/Saldo Bruto em:\s*(\d{2}\/\d{2}\/\d{4})/gi)];
+  const dataFechamento = datasFechamento.length ? brDateToParts(datasFechamento[datasFechamento.length-1][1]) : (mes&&ano ? lastDayOfMonth(ano,mes) : null);
+
+  const rendimentoValor = rendM ? parseBRL(rendM[1]) : 0;
+  const aplicValor = aplicM ? parseBRL(aplicM[1]) : 0;
+  const resgValor = resgM ? parseBRL(resgM[1]) : 0;
+  const irrfValor = irrfM ? parseBRL(irrfM[1]) : 0;
+  const iofValor = iofM ? parseBRL(iofM[1]) : 0;
+
+  return {
+    id: "g"+Math.random().toString(36).slice(2,9),
+    arquivo: fileName, tipo: "consolidado", titulo: "", produto,
+    contaAplicacao: detectarContaPorProduto(produto) || "1249",
+    nome: "", cnpj: "",
+    periodo: {mes, ano},
+    dataFechamento,
+    aportes: (aplicValor>0 && dataFechamento) ? [{tipo:"aporte", data:dataFechamento, valor:aplicValor}] : [],
+    buckets: (resgValor>0 && dataFechamento) ? [{key:`${ano}-${String(mes).padStart(2,"0")}`, mes, ano, capitalizacao:0, irrf:irrfValor, iof:iofValor, resgates:[{data:dataFechamento, valor:resgValor}]}] : [],
+    rendimentoPeriodo: (mes&&ano) ? {mes, ano, valor:rendimentoValor, data:dataFechamento} : null,
+    semDadosSuficientes: !(mes && ano),
+  };
+}
+
+function detectarTipoAplicacao(fullText){
+  if(/POSICAO DA CARTEIRA/i.test(fullText) && /CAPTACAO REMUNERADA/i.test(fullText)) return "carteira";
+  if(/Extrato de aplica/i.test(fullText) && /SALDO ATUAL/i.test(fullText)) return "consolidado";
+  return null;
+}
+
+let aplicacaoGrupos = [];
+wireDropzoneMulti("aplicDropzone","aplicFileInput", async (files, drop)=>{
+  const status = document.getElementById("aplicUploadStatus");
+  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo " + files.length + " arquivo(s)...";
+  let ok=0, falhas=[];
+  for(const f of files){
+    try{
+      const pages = await extractPdfAllLines(f);
+      const allLines = pages.flat();
+      const fullText = allLines.join("\n");
+      const tipo = detectarTipoAplicacao(fullText);
+      let grupo = null;
+      if(tipo==="carteira") grupo = parseCarteiraPdf(allLines, f.name);
+      else if(tipo==="consolidado") grupo = parseConsolidadoPdf(fullText, f.name);
+      if(!grupo) throw new Error("formato não reconhecido");
+      grupo.nome = grupo.titulo ? ("APLICACAO "+grupo.titulo) : (grupo.produto || f.name);
+      aplicacaoGrupos.push(grupo);
+      ok++;
+    }catch(err){
+      falhas.push(f.name + " (" + err.message + ")");
+    }
+  }
+  markDropDone(drop, ok + " arquivo(s) lido(s)");
+  status.classList.add(falhas.length?"err":"ok");
+  status.textContent = ok + " grupo(s) reconhecido(s)." + (falhas.length ? " Falharam: " + falhas.join("; ") : "");
+  renderGrupos();
+});
+
+function renderGrupos(){
+  if(!aplicacaoGrupos.length) return;
+  document.getElementById("boxGrupos").classList.remove("hidden");
+  const tbl = document.getElementById("gruposTable");
+  tbl.innerHTML = `<thead><tr>
+    <th>Arquivo</th><th>Tipo</th><th>Título</th><th>Produto</th><th>Conta</th><th>Nome ({NOME})</th><th>CNPJ/CPF</th><th>Movimentos</th><th></th>
+  </tr></thead><tbody>` + aplicacaoGrupos.map((g,i)=>{
+    const nMovs = g.aportes.length + g.buckets.reduce((s,b)=>s+(b.resgates?b.resgates.length:0),0) + (g.rendimentoPeriodo && g.rendimentoPeriodo.valor ? 1 : 0);
+    return `<tr class="${g.semDadosSuficientes?'warn':''}">
+      <td>${g.arquivo}</td>
+      <td>${g.tipo==="carteira"?"Posição Carteira":"Consolidado"}</td>
+      <td>${g.titulo||""}</td>
+      <td style="max-width:220px;white-space:normal;">${g.produto||""}</td>
+      <td class="cell"><input class="cell-input" style="width:60px" value="${g.contaAplicacao||''}" onchange="updateGrupo(${i},'contaAplicacao',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${g.nome||''}" onchange="updateGrupo(${i},'nome',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${g.cnpj||''}" onchange="updateGrupo(${i},'cnpj',this.value)"></td>
+      <td>${nMovs}</td>
+      <td><button class="btn small ghost" onclick="removeGrupo(${i})">✕</button></td>
+    </tr>`;
+  }).join("") + "</tbody>";
+}
+function updateGrupo(i, field, val){
+  if(field==="cnpj") val = formatCnpjCpf(val);
+  aplicacaoGrupos[i][field] = val;
+}
+function removeGrupo(i){ aplicacaoGrupos.splice(i,1); renderGrupos(); }
+
+/* =========================================================================
+   GERAÇÃO DE LANÇAMENTOS + NOTA DE SERVIÇO a partir dos grupos
+   ========================================================================= */
+let lancRowsState = [];
+let nfRowsState = [];
+
+function gerarLancamentosENF(){
+  lancRowsState = lancRowsState.filter(r=>r.origem==="extrato-geral");
+  nfRowsState = nfRowsState.filter(r=>r.origem!=="resgate");
+  const pendencias = [];
+
+  aplicacaoGrupos.forEach(g=>{
+    const conta = g.contaAplicacao || "????";
+    const nome = g.nome || "";
+
+    // Aportes: D conta aplicacao / C 744
+    g.aportes.forEach(a=>{
+      lancRowsState.push({data:a.data, debito:conta, credito:"744", valor:a.valor,
+        hist:`VALOR REF. APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
+    });
+
+    // Buckets (mês/título): resgate + irrf + iof, e/ou capitalização (rendimento)
+    g.buckets.forEach(b=>{
+      const resgates = b.resgates||[];
+      const totalResgate = resgates.reduce((s,r)=>s+r.valor,0);
+      if(resgates.length){
+        const dataRef = resgates.reduce((max,r)=> (!max || partsToDate(r.data)>partsToDate(max)) ? r.data : max, null);
+        lancRowsState.push({data:dataRef, debito:"744", credito:conta, valor:totalResgate,
+          hist:`VALOR REF. RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
+        if(b.irrf){
+          lancRowsState.push({data:dataRef, debito:"60", credito:conta, valor:b.irrf,
+            hist:`VALOR REF. IRRF SOBRE RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
+        }
+        if(b.iof){
+          lancRowsState.push({data:dataRef, debito:"386", credito:conta, valor:b.iof,
+            hist:`VALOR REF. IOF SOBRE RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
+        }
+        // Nota de Serviço — só para relatórios "carteira" (Posição da Carteira, 1, 2 e 3)
+        if(g.tipo==="carteira" && b.capitalizacao){
+          const base = b.irrf ? (b.irrf/0.15) : 0;
+          const liquido = b.capitalizacao - (b.irrf||0);
+          nfRowsState.push({
+            data: dataRef, nome, cnpj:g.cnpj||"",
+            valorServico: b.capitalizacao, irrf: b.irrf||0, base, liquido,
+            acumulador: document.getElementById("nfAcumulador").value.trim(),
+            cfps: document.getElementById("nfCfps").value.trim(),
+            numeroNF:"", incluir:true, origem:"resgate",
+          });
+        }
+      } else if(b.capitalizacao || b.irrf || b.iof){
+        pendencias.push(`${g.arquivo} — ${b.mes}/${b.ano}: tem capitalização/IRRF/IOF mas nenhum resgate no mês (não gerei lançamento nem NF automaticamente — confira manualmente).`);
+      }
+    });
+
+    // Rendimento do período — só relatório Consolidado (Taxa Selic, 1249)
+    if(g.tipo==="consolidado" && g.rendimentoPeriodo && g.rendimentoPeriodo.valor){
+      const rp = g.rendimentoPeriodo;
+      const dataRef = rp.data || (rp.mes&&rp.ano ? lastDayOfMonth(rp.ano, rp.mes) : null);
+      const mesLabel = rp.mes ? `${MESES_PT[rp.mes-1]}/${rp.ano}` : "";
+      lancRowsState.push({data:dataRef, debito:conta, credito:"395", valor:rp.valor,
+        hist:`VALOR REF. RENDIMENTO DE APLICACAO ${nome} ${mesLabel}`, incluir:true, origem:"aplicacao"});
+    }
+  });
+
+  renderLancTable();
+  renderNFTable();
+  const st = document.getElementById("gruposStatus");
+  st.classList.remove("hidden");
+  if(pendencias.length){
+    st.classList.add("err"); st.classList.remove("ok");
+    st.textContent = "Atenção:\n" + pendencias.join("\n");
+  }else{
+    st.classList.add("ok"); st.classList.remove("err");
+    st.textContent = `${lancRowsState.length} lançamento(s) e ${nfRowsState.length} nota(s) de serviço gerados.`;
+  }
+}
+
+/* ---- Lançamentos: tabela + export (layout Data;Débito;Crédito;Valor;Histórico) ---- */
+function renderLancTable(){
+  document.getElementById("boxLancamentos").classList.toggle("hidden", !lancRowsState.length);
+  const tbl = document.getElementById("lancTable");
+  tbl.innerHTML = `<thead><tr><th>Data</th><th>Débito</th><th>Crédito</th><th>Valor</th><th>Histórico</th><th></th></tr></thead><tbody>` +
+    lancRowsState.map((r,i)=>`<tr class="${!r.incluir?'excluded':(r.flag?'warn':(!r.debito||!r.credito?'err':''))}">
+      <td class="cell"><input class="cell-input" value="${fmtDateBR(r.data)}" onchange="updateLancRow(${i},'data',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:60px" value="${r.debito||''}" onchange="updateLancRow(${i},'debito',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:60px" value="${r.credito||''}" onchange="updateLancRow(${i},'credito',this.value)"></td>
+      <td class="cell"><input class="cell-input num" value="${fmtBRL(r.valor)}" onchange="updateLancRow(${i},'valor',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${r.hist||''}" onchange="updateLancRow(${i},'hist',this.value)"></td>
+      <td style="text-align:center"><input type="checkbox" ${r.incluir?'checked':''} onchange="updateLancRow(${i},'incluir',this.checked)"></td>
+    </tr>`).join("") + "</tbody>";
+}
+function updateLancRow(i, field, val){
+  const r = lancRowsState[i];
+  if(field==="data"){ const dt=brDateToParts(val); if(dt) r.data=dt; }
+  else if(field==="valor"){ const n=parseBRL(val); if(n!=null) r.valor=n; }
+  else if(field==="incluir"){ r.incluir = !!val; }
+  else { r[field] = val; }
+  renderLancTable();
+}
+const LANC_HEADER = ["Data","Débito","Crédito","Valor","Cód. Hist.","Complemento Histórico","Inicia Lote","Código Emp.","Centro de Custo Débito","Centro de Custo Crédito"];
+function lancRowArray(r){
+  const codEmp = document.getElementById("lancCodEmp").value.trim();
+  return [fmtDateBR(r.data), r.debito||"", r.credito||"", r.valor, "", r.hist||"", "", codEmp, "", ""];
+}
+function downloadLancXlsx(){
+  const rows = lancRowsState.filter(r=>r.incluir);
+  downloadXlsx("lancamentos_gladius.xlsx", [LANC_HEADER, ...rows.map(lancRowArray)], "Lancamentos");
+}
+function downloadLancTxt(){
+  const rows = lancRowsState.filter(r=>r.incluir);
+  const lines = rows.map(r=> lancRowArray(r).map((v,i)=> i===3 ? fmtValorTxt(v) : (i===5 ? stripAccents(v) : v)).join(";"));
+  downloadTextAnsi("lanctos_gladius.txt", lines.join("\r\n") + "\r\n");
+}
+
+/* ---- Nota de Serviço: tabela + export (layout 28 colunas, mesmo modelo do Hub) ---- */
+const NF_HEADER = ["CPF/CNPJ","Razão Social","UF","Município","Endereço","Número Documento","Série","Data","Situação","Acumulador","CFPS","Valor Serviços","Valor Descontos","Valor Dedução","Valor Contábil","Base de Calculo","Alíquota ISS","Valor ISS Normal","Valor ISS Retido","Valor IRRF","Valor PIS","Valor COFINS","Valor CSLL","Valo CRF","Valor INSS","Código do Item","Quantidade","Valor Unitário"];
+function nfRowArray(n){
+  const row = new Array(28).fill("");
+  row[0] = onlyDigits(n.cnpj) || "";
+  row[1] = n.nome || "";
+  row[5] = n.numeroNF || "";
+  row[6] = 1;
+  row[7] = fmtDateBR(n.data);
+  row[8] = 0;
+  row[9] = n.acumulador || "";
+  row[10] = n.cfps || "";
+  row[11] = n.valorServico || 0;
+  row[12] = 0;
+  row[14] = n.valorServico || 0;
+  row[15] = n.base || 0;
+  row[19] = n.irrf || 0;
+  return row;
+}
+function renderNFTable(){
+  document.getElementById("boxNF").classList.toggle("hidden", !nfRowsState.length);
+  const tbl = document.getElementById("nfTable");
+  tbl.innerHTML = `<thead><tr><th>Origem</th><th>Data</th><th>Cliente</th><th>CNPJ</th><th>Nº NF</th><th>Acum.</th><th>CFPS</th><th>Valor Serviço</th><th>IRRF</th><th>Base Cálc.</th><th>Líquido</th><th></th></tr></thead><tbody>` +
+    nfRowsState.map((n,i)=>`<tr class="${n.incluir?'':'excluded'}">
+      <td style="white-space:nowrap;color:var(--ink-soft);">${n.origem==="resgate"?"Resgate":"Extrato"}</td>
+      <td class="cell"><input class="cell-input" value="${fmtDateBR(n.data)}" onchange="updateNFRow(${i},'data',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${n.nome||''}" onchange="updateNFRow(${i},'nome',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${n.cnpj||''}" onchange="updateNFRow(${i},'cnpj',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:70px" value="${n.numeroNF||''}" onchange="updateNFRow(${i},'numeroNF',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:50px" value="${n.acumulador||''}" onchange="updateNFRow(${i},'acumulador',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:60px" value="${n.cfps||''}" onchange="updateNFRow(${i},'cfps',this.value)"></td>
+      <td class="cell"><input class="cell-input num" value="${fmtBRL(n.valorServico)}" onchange="updateNFRow(${i},'valorServico',this.value)"></td>
+      <td class="cell"><input class="cell-input num" value="${fmtBRL(n.irrf)}" onchange="updateNFRow(${i},'irrf',this.value)"></td>
+      <td class="cell num">${fmtBRL(n.base)}</td>
+      <td class="cell num">${fmtBRL(n.liquido)}</td>
+      <td style="text-align:center"><input type="checkbox" ${n.incluir?'checked':''} onchange="updateNFRow(${i},'incluir',this.checked)"></td>
+    </tr>`).join("") + "</tbody>";
+}
+function updateNFRow(i, field, val){
+  const n = nfRowsState[i];
+  if(field==="data"){ const dt=brDateToParts(val); if(dt) n.data=dt; }
+  else if(field==="valorServico" || field==="irrf"){ const v=parseBRL(val); if(v!=null) n[field]=v; }
+  else if(field==="incluir"){ n.incluir = !!val; }
+  else if(field==="cnpj"){ n.cnpj = formatCnpjCpf(val); }
+  else { n[field] = val; }
+  if(field==="valorServico" || field==="irrf"){
+    n.base = n.irrf ? (n.irrf/0.15) : 0;
+    n.liquido = (n.valorServico||0) - (n.irrf||0);
+  }
+  renderNFTable();
+}
+function downloadNFXlsx(){
+  const rows = nfRowsState.filter(n=>n.incluir);
+  downloadXlsx("NFS_Gladius.xlsx", [NF_HEADER, ...rows.map(nfRowArray)], "NFS");
+}
+function downloadNFTxt(){
+  const rows = nfRowsState.filter(n=>n.incluir);
+  const moneyIdx = [11,12,14,15,19];
+  const lines = rows.map(n => nfRowArray(n).map((v,i)=> moneyIdx.includes(i) ? fmtValorTxt(v) : (typeof v==="string"?stripAccents(v):v)).join(";"));
+  downloadTextAnsi("NFS_Gladius.txt", lines.join("\r\n") + "\r\n");
+}
+
+/* =========================================================================
+   LANÇAMENTOS CONTÁBEIS — EXTRATO GERAL
+   Cadastro de padrões (palavra-chave -> conta) + motor de casamento. A
+   direção (D/C) de cada conta do padrão é decidida pelo sinal real da
+   transação no banco (não fica fixa no cadastro) — assim o mesmo padrão
+   funciona pra pagamento normal e pra um eventual estorno/devolução do
+   mesmo tipo, sem precisar de dois cadastros.
+   Tipos de padrão:
+   - "simples": {chave:[...], conta, hist, mes:"atual"|"anterior"|null}
+   - "condominio": {chave:[...], conta, hist (com "{MES}"), condGrupo}
+     -> 1ª ocorrência do grupo no lote processado usa mês anterior à
+     transação, a 2ª em diante usa o mês da própria transação.
+   - "aluguel": {chave:[...], tipo:"aluguel", mes, prefixoHist, legs:[{conta,valor,sufixo}]}
+     -> conta 744 leva o valor cheio da transação; os "legs" são os
+     valores fixos combinados (não proporcionais) — se a soma dos legs não
+     bater com o valor da transação, a linha fica marcada pra conferir.
+   - patterns com "companion": além do lançamento principal, gera um
+     lançamento espelho de mesma data/valor (ex.: distribuição de lucros
+     -> provisão D 262 / C conta do sócio).
+   ========================================================================= */
+function mesLabelDe(data, deslocamentoMeses){
+  let m = data.m + deslocamentoMeses, y = data.y;
+  while(m < 1){ m += 12; y -= 1; }
+  while(m > 12){ m -= 12; y += 1; }
+  return `${MESES_PT[m-1]}/${y}`;
+}
+function extrairParenteses(desc){
+  const m = String(desc||"").match(/\(([^)]+)\)/);
+  return m ? m[1].trim() : "";
+}
+
+let padroesLancamentos = [
+  {chave:["ADIANTAMENTO DE ALUGUEL"], tipo:"aluguel", mes:"atual", prefixoHist:"PAGAMENTO ANTECIPADO REF. ALUGUEL",
+    legs:[{conta:"335", valor:1650, sufixo:"- ED. DIOMICIO FREITAS SALAS 402, 404, 405 E 406"},
+          {conta:"335", valor:400, sufixo:"- ED. HANNOVER SALA 1004"}]},
+  {chave:["PAGAMENTO ALUGUEL"], tipo:"aluguel", mes:"anterior", prefixoHist:"PAGAMENTO REF. ALUGUEL",
+    legs:[{conta:"335", valor:1650, sufixo:"- ED. DIOMICIO FREITAS SALAS 402, 404, 405 E 406"},
+          {conta:"335", valor:400, sufixo:"- ED. HANNOVER SALA 1004"}]},
+  {chave:["ADIANTAMENTO DE DESPESAS","POLLACK"], conta:"1194", hist:"PAGAMENTO REF. ADIANTAMENTO DE DESPESAS - INVENTARIO TANIA MARIA POLLACK"},
+  {chave:["ALUGUEL","POLLACK"], conta:"1194", hist:"RECEBIMENTO REF. ALUGUEL - INVENTARIO TANIA MARIA POLLACK"},
+  {chave:["CACHOEIRA DO EBRIO"], conta:"1161", hist:"VLR REF. ADIANTAMENTO CBEMI (CACHOEIRA DO EBRIO)"},
+  {chave:["CACHOEIRA DO GODO"], conta:"1160", hist:"VLR REF. ADIANTAMENTO CBEMI (CACHOEIRA DO CODO)"},
+  {chave:["DEVOLUCAO","EMPRESTIMO GUILHERME"], conta:"47", hist:"VALOR REF. DEVOLUCAO DO EMPRESTIMO FEITO AO SOCIO GUILHERME"},
+  {chave:["EMPRESTIMO GUILHERME"], conta:"47", hist:"VALOR REF. EMPRESTIMO FEITO AO SOCIO GUILHERME"},
+  {chave:["ADTO DESPESAS","METAL"], conta:"1081", hist:"PAGAMENTO REF. ADIANTAMENTO DE DESPESAS - METALURGICA DUQUE"},
+  {chave:["PAGTO DEVOLUCAO","FALENCIA MET"], conta:"1081", hist:"PAGAMENTO REF. DEVOLUCAO DE VALORES DA MET. DUQUE"},
+  {chave:["ADTO DESPESAS CBEMI"], conta:"998", hist:"PAGAMENTO REF. ADIANTAMENTO DE DESPESAS - ADIANTAMENTO MASSA FALIDA CBEMI"},
+  {chave:["CELESTINO NESI"], conta:"1242", hist:"PAGAMENTO REF. ADIANTAMENTO DE DESPESAS - ADIANTAMENTO INVENTARIO CELESTINO NESI"},
+  {chave:["RESSARCIMENTO DESPESAS COMIN"], conta:"1182", hist:"PAGAMENTO REF. ADIANTAMENTO DE DESPESAS - ADIANTAMENTO MASSA FALIDA COMIN E CIA LTDA"},
+  {chave:["DESPESA","BANCARIA"], conta:"384", hist:"PAGAMENTO REF. DESPESA BANCARIA"},
+  {chave:["DEVOLUCAO","BLUMENAU ESPORTE CLUBE"], conta:"45", hist:"VALOR REF. DEVOLUCAO DE ALVARA PARA PAGAMENTO CREDORES INSOLVENCIA BLUMENAU ESPORTE CLUBE"},
+  {chave:["CREDORES BLUMENAU ESPORTE CLUBE"], conta:"45", hist:"PAGAMENTO REF. CREDORES INSOLVENCIA BLUMENAU ESPORTE CLUBE"},
+  {chave:["DEVOLUCAO DE ALUGUEL","ALVARO"], conta:"1083", hist:"PAGAMENTO REF. DEVOLUCAO ADMINISTRACAO JUDICIAL ALVARO X CVA"},
+  {chave:["REC. ALUGUEL","ALVARO"], conta:"1083", hist:"RECEBIMENTO REF. ALUGUEL AJ PROC: 5000246-17.2014.8.24.0020 ALVARO X CVA"},
+  {chave:["DIST LUCROS AGENOR"], conta:"39", hist:"PAGAMENTO REF. LUCROS DISTRIBUIDOS AO SOCIO AGENOR",
+    companion:{contaSocio:"39", debito:"262", hist:"VALOR REF. LUCROS A DISTRIBUIR A(O) SOCIO (A) AGENOR"}},
+  {chave:["DIST LUCROS CIBELE"], conta:"40", hist:"PAGAMENTO REF. LUCROS DISTRIBUIDOS A SOCIA CIBELE",
+    companion:{contaSocio:"40", debito:"262", hist:"VALOR REF. LUCROS A DISTRIBUIR A(O) SOCIO (A) CIBELE"}},
+  {chave:["DIST LUCROS GABRIELA"], conta:"41", hist:"PAGAMENTO REF. LUCROS DISTRIBUIDOS A SOCIA GABRIELA",
+    companion:{contaSocio:"41", debito:"262", hist:"VALOR REF. LUCROS A DISTRIBUIR A(O) SOCIO (A) GABRIELA"}},
+  {chave:["DIST LUCROS GUILHERME"], conta:"42", hist:"PAGAMENTO REF. LUCROS DISTRIBUIDOS AO SOCIO GUILHERME",
+    companion:{contaSocio:"42", debito:"262", hist:"VALOR REF. LUCROS A DISTRIBUIR A(O) SOCIO (A) GUILHERME"}},
+  {chave:["ACIC"], conta:"348", hist:"PAGAMENTO REF. ASSOCIACOES DE CLASSE {MES} - ACIC", mes:"anterior"},
+  {chave:["CONDOMINIO","DIOMICIO FREITAS"], tipo:"condominio", conta:"341", hist:"PAGAMENTO REF. CONDOMINIO {MES} - ED. DIOMICIO FREITAS SALAS 402, 404, 405 E 406", condGrupo:"DIOMICIO FREITAS"},
+  {chave:["CONDOMINIO HANNOVER"], tipo:"condominio", conta:"341", hist:"PAGAMENTO REF. CONDOMINIO {MES} - ED. HANNOVER SALA 1004", condGrupo:"HANNOVER"},
+  {chave:["CONDOMINIO MARTINHO"], tipo:"condominio", conta:"341", hist:"PAGAMENTO REF. CONDOMINIO {MES} - ED. MARTINHO ACACIO SALA 121", condGrupo:"MARTINHO ACACIO"},
+  {chave:["CONDOMINIO RIVIEIRA"], tipo:"condominio", conta:"341", hist:"PAGAMENTO REF. CONDOMINIO {MES} - ED. MARTINHO ACACIO SALA 121", condGrupo:"MARTINHO ACACIO"},
+  {chave:["FAXINEIRA"], conta:"332", hist:"PAGAMENTO REF. FAXINEIRA"},
+  {chave:["MATERIA","EXPEDIENTE"], conta:"344", hist:"PAGAMENTO REF. MATERIAIS DE EXPEDIENTE"},
+  {chave:["CELESC","HANNOVER"], conta:"334", hist:"PAGAMENTO REF. ENERGIA ELETRICA {MES} - ED. HANNOVER SALA 1004", mes:"anterior"},
+  {chave:["CELESC","MARTINHO"], conta:"334", hist:"PAGAMENTO REF. ENERGIA ELETRICA {MES} - ED. MARTINHO ACACIO SALA 121", mes:"anterior"},
+  {chave:["CELESC","DIOMICIO FREITAS"], conta:"334", hist:"PAGAMENTO REF. ENERGIA ELETRICA {MES} - ED. DIOMICIO FREITAS SALAS 402, 404, 405 E 406", mes:"anterior"},
+  {chave:["PAGTO CORREIO"], conta:"342", hist:"PGTO REF. AGF - CORREIOS"},
+  {chave:["CREDORES FALENCIA MOLIZA"], conta:"866", hist:"PAGAMENTO REF. CREDORES MASSA FALIDA ADIANTAMENTO MOLIZA"},
+  {chave:["DEVOLUCAO","FALENCIA MOLIZA"], conta:"866", hist:"PAGAMENTO REF. DEVOLUCAO DE VALORES DA MASSA FALIDA ADIANTAMENTO MOLIZA"},
+  {chave:["PAGTO ITR"], conta:"373", hist:"PGTO IMPOSTO ITR - IMPOSTO SOBRE A PROPRIEDADE TERRITORIAL RURAL"},
+  {chave:["VIVO MOVEL"], conta:"333", hist:"PAGAMENTO REF. VIVO MOVEL {MES}", mes:"anterior"},
+  {chave:["VIVO","DIOMICIO FREITAS"], conta:"333", hist:"PAGAMENTO REF. VIVO TELEFONE {MES} - ED. DIOMICIO FREITAS SALAS 402, 404, 405 E 406", mes:"anterior"},
+  {chave:["TAXAS DE CARTORIO"], conta:"638", hist:"PAGAMENTO REF. TAXAS CARTORARIAS"},
+  {chave:["TAXAS CARTORIO"], conta:"638", hist:"PAGAMENTO REF. TAXAS CARTORARIAS"},
+  {chave:["SERVICO PRESTADO CONFECCAO DE MAPAS"], conta:"1331", hist:"PAGAMENTO REF. PERICIA CONTRATADA EM PROCESSO - {NOME_PARENTESE}"},
+];
+
+function encontrarPadrao(descNorm){
+  return padroesLancamentos.find(p => p.chave.every(k => descNorm.includes(k)));
+}
+function aplicarPadrao(p, linha){
+  const outflow = linha.valor < 0;
+  const valorAbs = Math.abs(linha.valor);
+  const nome_parentese = extrairParenteses(linha.descricao).toUpperCase();
+  const rows = [];
+
+  if(p.tipo==="aluguel"){
+    const mesLabel = mesLabelDe(linha.data, p.mes==="anterior" ? -1 : 0);
+    const somaLegs = p.legs.reduce((s,l)=>s+l.valor,0);
+    const flag = Math.round(somaLegs*100)!==Math.round(valorAbs*100);
+    rows.push({data:linha.data, debito: outflow?"":"744", credito: outflow?"744":"", valor:valorAbs,
+      hist:`${p.prefixoHist} ${mesLabel}`, incluir:true, origem:"extrato-geral", flag});
+    p.legs.forEach(l=>{
+      rows.push({data:linha.data, debito: outflow?l.conta:"", credito: outflow?"":l.conta, valor:l.valor,
+        hist:`${p.prefixoHist} ${mesLabel} ${l.sufixo}`, incluir:true, origem:"extrato-geral", flag});
+    });
+    return rows;
+  }
+
+  let mesLabel = "";
+  if(p.tipo==="condominio"){
+    const n = (window._condCount[p.condGrupo] = (window._condCount[p.condGrupo]||0) + 1);
+    mesLabel = mesLabelDe(linha.data, n===1 ? -1 : 0);
+  } else if(p.mes==="anterior"){
+    mesLabel = mesLabelDe(linha.data, -1);
+  } else if(p.mes==="atual"){
+    mesLabel = mesLabelDe(linha.data, 0);
+  }
+  const hist = p.hist.replace("{MES}", mesLabel).replace("{NOME_PARENTESE}", nome_parentese || "?");
+  rows.push({data:linha.data, debito: outflow?p.conta:"744", credito: outflow?"744":p.conta, valor:valorAbs,
+    hist, incluir:true, origem:"extrato-geral", flag: hist.includes("?")});
+
+  if(p.companion){
+    rows.push({data:linha.data, debito:p.companion.debito, credito:p.companion.contaSocio, valor:valorAbs,
+      hist:p.companion.hist, incluir:true, origem:"extrato-geral"});
+  }
+  return rows;
+}
+
+let extratoGeralState = null;
+wireDropzone("extratoGeralDrop","extratoGeralFile", async (f,d)=>{
+  try{
+    extratoGeralState = await readExtratoDescricao(f);
+    markDropDone(d, extratoGeralState.length + " lançamento(s) do extrato");
+    document.getElementById("processLancGeralBtn").disabled = false;
+  }catch(err){ alert("Erro ao ler Excel: " + err.message); }
+});
+function processarLancamentosExtrato(){
+  window._condCount = {};
+  lancRowsState = lancRowsState.filter(r=>r.origem!=="extrato-geral");
+  let semPadrao = 0, comFlag = 0;
+  extratoGeralState.forEach(l=>{
+    const descNorm = normalizeText(l.descricao);
+    const p = encontrarPadrao(descNorm);
+    if(!p){
+      const outflow = l.valor < 0;
+      // "Resgate"/"Aplicação" (conta de aplicação) e linhas que citam "NF ###" já são
+      // cobertas pela Aplicação Financeira e pela Baixa de Serviços/Entradas — entram
+      // aqui só como lembrete, desmarcadas, pra não arriscar duplicar na exportação.
+      const jaCoberta = /\bRESGATE\b/i.test(l.descricao) || /\bNF\.?\s*\d/i.test(l.descricao);
+      lancRowsState.push({data:l.data, debito: outflow?"":"744", credito: outflow?"744":"", valor:Math.abs(l.valor),
+        hist: jaCoberta ? `${l.descricao} (já coberto por outra seção — não exportar aqui)` : l.descricao,
+        incluir: !jaCoberta, origem:"extrato-geral", flag:true});
+      semPadrao++;
+      return;
+    }
+    const rows = aplicarPadrao(p, l);
+    rows.forEach(r=>{ if(r.flag) comFlag++; });
+    lancRowsState.push(...rows);
+  });
+  renderLancTable();
+  const status = document.getElementById("lancGeralStatus");
+  status.classList.remove("hidden","err","ok");
+  status.classList.add(semPadrao||comFlag ? "err" : "ok");
+  status.textContent = `${extratoGeralState.length} lançamento(s) do extrato processado(s). ${semPadrao} sem padrão (completar conta à mão), ${comFlag} pra conferir (valor/placeholder).`;
+}
+
+/* ---- Cadastro de padrões: tabela + edição via JSON ---- */
+function renderPadroesTable(){
+  const tbl = document.getElementById("padroesTable");
+  if(!tbl) return;
+  tbl.innerHTML = `<thead><tr><th>Palavra(s)-chave</th><th>Tipo</th><th>Conta(s)</th><th>Histórico</th></tr></thead><tbody>` +
+    padroesLancamentos.map(p=>{
+      const contas = p.tipo==="aluguel" ? ["744", ...p.legs.map(l=>l.conta)].join(" / ") : [p.conta, p.companion?p.companion.contaSocio:null, p.companion?p.companion.debito:null].filter(Boolean).join(" / ");
+      const hist = p.tipo==="aluguel" ? p.prefixoHist : p.hist;
+      return `<tr><td>${p.chave.join(" + ")}</td><td>${p.tipo||"simples"}${p.companion?" +espelho":""}</td><td>${contas}</td><td style="max-width:360px;white-space:normal;">${hist}</td></tr>`;
+    }).join("") + "</tbody>";
+}
+function togglePadroesJson(){
+  const box = document.getElementById("padroesJsonBox");
+  box.classList.toggle("hidden");
+  if(!box.classList.contains("hidden")){
+    document.getElementById("padroesJsonArea").value = JSON.stringify(padroesLancamentos, null, 2);
+  }
+}
+function salvarPadroesJson(){
+  const status = document.getElementById("padroesJsonStatus");
+  status.classList.remove("hidden","err","ok");
+  try{
+    const parsed = JSON.parse(document.getElementById("padroesJsonArea").value);
+    if(!Array.isArray(parsed)) throw new Error("precisa ser uma lista (array)");
+    padroesLancamentos = parsed;
+    renderPadroesTable();
+    status.classList.add("ok"); status.textContent = "Cadastro salvo.";
+    if(extratoGeralState) processarLancamentosExtrato();
+  }catch(err){
+    status.classList.add("err"); status.textContent = "JSON inválido: " + err.message;
+  }
+}
+renderPadroesTable();
+
+/* =========================================================================
+   NF — RECEBIMENTOS DO EXTRATO (ALVARÁ/HONORÁRIOS/ALUGUEL)
+   Detecta sozinho, no extrato bancário, linhas de recebimento (ou
+   devolução) ligadas a alvará/honorários/aluguel — cada uma vira uma Nota
+   de Serviço pelo valor da transação (editável, pra casos em que a nota é
+   só por uma parte do valor recebido).
+   ========================================================================= */
+let alvaraCandidatos = [];
+wireDropzone("extratoAlvaraDrop","extratoAlvaraFile", async (f,d)=>{
+  const status = document.getElementById("alvaraStatus");
+  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo extrato...";
+  try{
+    const linhas = await readExtratoDescricao(f);
+    alvaraCandidatos = linhas
+      .map((l,i)=>({...l, idx:i}))
+      .filter(l=> /ALVARA|HONORARIO|ALUGUEL/i.test(normalizeText(l.descricao)))
+      .map(l=>({
+        data: l.data, descricao: l.descricao, valorTransacao: l.valor,
+        nome: l.descricao, cnpj: document.getElementById("alvaraCnpjPadrao").value.trim(),
+        acumulador: document.getElementById("alvaraAcumulador").value.trim(),
+        cfps: document.getElementById("alvaraCfps").value.trim(),
+        valorServico: Math.abs(l.valor),
+        incluir: l.valor > 0,
+      }));
+    markDropDone(d, alvaraCandidatos.length + " linha(s) encontrada(s)");
+    status.classList.add("ok");
+    status.textContent = alvaraCandidatos.length + ' linha(s) com "Alvará/Honorários/Aluguel" no histórico. Linhas a débito vêm desmarcadas — confira o valor certo da nota antes de marcar.';
+    renderAlvaraTable();
+  }catch(err){
+    status.classList.add("err"); status.textContent = "Erro ao ler Excel: " + err.message;
+  }
+});
+function renderAlvaraTable(){
+  document.getElementById("boxAlvaraTabela").classList.toggle("hidden", !alvaraCandidatos.length);
+  const tbl = document.getElementById("alvaraTable");
+  tbl.innerHTML = `<thead><tr><th></th><th>Data</th><th>Descrição</th><th>Valor Transação</th><th>Valor da Nota</th><th>Cliente</th><th>CNPJ</th><th>Acum.</th><th>CFPS</th></tr></thead><tbody>` +
+    alvaraCandidatos.map((r,i)=>`<tr class="${r.valorTransacao<0?'warn':''}">
+      <td style="text-align:center"><input type="checkbox" ${r.incluir?'checked':''} onchange="updateAlvaraRow(${i},'incluir',this.checked)"></td>
+      <td>${fmtDateBR(r.data)}</td>
+      <td style="max-width:280px;white-space:normal;">${r.descricao}</td>
+      <td class="num">${fmtBRL(r.valorTransacao)}</td>
+      <td class="cell"><input class="cell-input num" value="${fmtBRL(r.valorServico)}" onchange="updateAlvaraRow(${i},'valorServico',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${r.nome||''}" onchange="updateAlvaraRow(${i},'nome',this.value)"></td>
+      <td class="cell"><input class="cell-input wide" value="${r.cnpj||''}" onchange="updateAlvaraRow(${i},'cnpj',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:50px" value="${r.acumulador||''}" onchange="updateAlvaraRow(${i},'acumulador',this.value)"></td>
+      <td class="cell"><input class="cell-input" style="width:60px" value="${r.cfps||''}" onchange="updateAlvaraRow(${i},'cfps',this.value)"></td>
+    </tr>`).join("") + "</tbody>";
+}
+function updateAlvaraRow(i, field, val){
+  const r = alvaraCandidatos[i];
+  if(field==="incluir"){ r.incluir = !!val; }
+  else if(field==="valorServico"){ const v=parseBRL(val); if(v!=null) r.valorServico=v; }
+  else if(field==="cnpj"){ r.cnpj = formatCnpjCpf(val); }
+  else { r[field] = val; }
+  renderAlvaraTable();
+}
+function adicionarAlvaraNF(){
+  const incluidas = alvaraCandidatos.filter(r=>r.incluir);
+  if(!incluidas.length){ alert("Nenhuma linha marcada."); return; }
+  incluidas.forEach(r=>{
+    nfRowsState.push({
+      data: r.data, nome: r.nome, cnpj: r.cnpj,
+      valorServico: r.valorServico, irrf: 0, base: 0, liquido: r.valorServico,
+      acumulador: r.acumulador, cfps: r.cfps,
+      numeroNF:"", incluir:true, origem:"extrato",
+    });
+  });
+  renderNFTable();
+  const status = document.getElementById("alvaraStatus");
+  status.classList.remove("err"); status.classList.add("ok");
+  status.textContent = `${incluidas.length} nota(s) adicionada(s) à tabela de Nota de Serviço acima.`;
+}
+
+/* =========================================================================
+   BAIXA DE SERVIÇOS — Contas a Receber por Cliente × extrato bancário
+   (casamento pelo número da NF citado no histórico do extrato, não por
+   valor/data — muito mais confiável quando o banco já cita "NF ###")
+   ========================================================================= */
+const EMPRESA_RE = /^Empresa:\s*(.+?)\s+P.gina/i;
+const CNPJ_HEADER_RE = /CNPJ:\s*([\d.\/-]{14,18})/;
+const GROUP_RE = /^(Cliente|Fornecedor):\s*(\d+)\s*-\s*(.+)$/;
+const TITULO_RE = /^(\S+)\s+(\d{2}\/\d{2}\/\d{4})\s+\d{2}\/\d{2}\/\d{4}\s+(\d{2}\/\d{2}\/\d{4})\s+([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+\s+[\d.,]+\s+[\d.,]+\s+[\d.,]+\s+([\d.,]+)\s*(Aberta|Parcial|Baixada|Recebida|Paga)$/;
+
+async function parseContasPdf(file){
+  const pages = await extractPdfAllLines(file);
+  const allLines = pages.flat();
+  const fullText = allLines.join("\n");
+  let empresaNome = null, empresaCnpj = null;
+  const em = fullText.match(EMPRESA_RE); if(em) empresaNome = em[1].trim();
+  const cm = fullText.match(CNPJ_HEADER_RE); if(cm) empresaCnpj = onlyDigits(cm[1]);
+  const titulos = [];
+  let codigo=null, nomeParceiro=null;
+  allLines.forEach(line=>{
+    const gm = line.match(GROUP_RE);
+    if(gm){ codigo=gm[2]; nomeParceiro=gm[3].trim(); return; }
+    if(/^Sub Total/i.test(line) || /^Total Geral/i.test(line) || /^Documento/i.test(line)) return;
+    const tm = line.match(TITULO_RE);
+    if(tm && codigo!=null){
+      titulos.push({
+        codigo, nome: nomeParceiro, documento: tm[1],
+        emissao: brDateToParts(tm[2]), vencimento: brDateToParts(tm[3]),
+        valorParcela: parseBRL(tm[4]), valorRecebido: parseBRL(tm[5]),
+        saldo: parseBRL(tm[6]), situacao: tm[7],
+      });
+    }
+  });
+  return {empresaNome, empresaCnpj, titulos};
+}
+
+async function readExtratoDescricao(file){
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, {type:"array", cellDates:false});
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true});
+  let headerRow=-1, dataCol=-1, descCol=-1, valorCol=-1;
+  for(let i=0;i<rows.length;i++){
+    const r = rows[i]; if(!r) continue;
+    const idx = r.findIndex(c=>String(c).trim().toLowerCase()==="data");
+    if(idx>=0){
+      headerRow=i; dataCol=idx;
+      const dIdx = r.findIndex((c,j)=> j!==idx && /descri.{0,3}o|hist.rico/i.test(String(c)));
+      descCol = dIdx>=0 ? dIdx : idx+1;
+      const vIdx = r.findIndex((c,j)=> j!==idx && j!==descCol && /valor|movimenta.{0,3}o/i.test(String(c)));
+      valorCol = vIdx>=0 ? vIdx : descCol+1;
+      break;
+    }
+  }
+  if(headerRow<0) throw new Error('Não encontrei uma coluna "Data" na primeira planilha do Excel.');
+  const out = [];
+  for(let i=headerRow+1;i<rows.length;i++){
+    const r = rows[i];
+    if(!r || r[dataCol]==null) continue;
+    const rawValor = r[valorCol];
+    const valor = typeof rawValor==="number" ? rawValor : parseBRL(rawValor);
+    if(valor==null) continue;
+    let dt;
+    if(typeof r[dataCol]==="number") dt = excelDateToParts(r[dataCol]);
+    else dt = brDateToParts(r[dataCol]);
+    if(!dt) continue;
+    out.push({data:dt, descricao:String(r[descCol]??"").trim(), valor});
+  }
+  return out;
+}
+
+let contasReceberState = null, extratoServicosState = null;
+function checkBaixaBtn(){
+  document.getElementById("processBaixaBtn").disabled = !(contasReceberState && extratoServicosState);
+}
+wireDropzone("contasDrop","contasFile", async (f,d)=>{
+  try{
+    contasReceberState = await parseContasPdf(f);
+    markDropDone(d, contasReceberState.titulos.length + " título(s) — " + (contasReceberState.empresaNome||""));
+    checkBaixaBtn();
+  }catch(err){ alert("Erro ao ler PDF: " + err.message); }
+});
+wireDropzone("extratoDrop","extratoFile", async (f,d)=>{
+  try{
+    extratoServicosState = await readExtratoDescricao(f);
+    markDropDone(d, extratoServicosState.length + " lançamento(s) do extrato");
+    checkBaixaBtn();
+  }catch(err){ alert("Erro ao ler Excel: " + err.message); }
+});
+
+let clientesDB = {}; // preenchido via Firestore (script de módulo abaixo)
+let codigoIndex = {};
+window.setClientesDB = function(db){ clientesDB = db; window.clientesDB = db; rebuildCodigoIndex(); };
+window.clientesDB = clientesDB;
+function rebuildCodigoIndex(){
+  codigoIndex = {};
+  Object.keys(clientesDB).forEach(doc=>{
+    const codigos = clientesDB[doc].codigos || {};
+    Object.keys(codigos).forEach(k=>{ codigoIndex[`${k}_${codigos[k]}`] = doc; });
+  });
+}
+function findBestMatch(nome, db){
+  const norm = normalizeText(nome);
+  const words = norm.split(/\s+/).filter(w=>w.length>2);
+  let best=null, bestScore=0, bestKey=null;
+  Object.keys(db).forEach(key=>{
+    const c = db[key];
+    const cn = normalizeText(c.razao_social);
+    let score = 0;
+    if(cn.includes(norm) || norm.includes(cn)) score += 10;
+    words.forEach(w=>{ if(cn.includes(w)) score += 1; });
+    if(score>bestScore){ bestScore=score; best=c; bestKey=key; }
+  });
+  return bestScore>0 ? {documento:bestKey, nome:best.razao_social} : null;
+}
+function resolverCnpj(empresaCnpj, tipoTitulo, codigo, nomeRelatorio){
+  const chave = `${empresaCnpj}_${tipoTitulo}_${codigo}`;
+  const doc = codigoIndex[chave];
+  if(doc && clientesDB[doc]) return {documento:doc, nome:clientesDB[doc].razao_social, exato:true};
+  const m = findBestMatch(nomeRelatorio, clientesDB);
+  return m ? {...m, exato:false} : null;
+}
+
+let baixaRowsState = [];
+function processarBaixaServicos(){
+  const {empresaNome, empresaCnpj, titulos} = contasReceberState;
+  const porDocumento = {};
+  titulos.forEach(t=>{ porDocumento[onlyDigits(String(t.documento)).replace(/^0+/,"") || t.documento] = t; });
+
+  const semExtrato = [];
+  baixaRowsState = [];
+  const nfRe = /\bNF\.?\s*n?\.?\s*(\d{1,10})\b/i;
+  extratoServicosState.forEach(l=>{
+    const m = l.descricao.match(nfRe);
+    if(!m) return; // linha do extrato não cita NF — não é recebimento de serviço reconhecível
+    const nfNum = m[1].replace(/^0+/,"") || m[1];
+    const titulo = porDocumento[nfNum] || titulos.find(t=> String(t.documento).replace(/^0+/,"")===nfNum);
+    if(!titulo){ semExtrato.push(l); return; }
+    const cnpjInfo = resolverCnpj(empresaCnpj, "cliente", titulo.codigo, titulo.nome);
+    baixaRowsState.push({
+      numero: titulo.documento,
+      cnpj: cnpjInfo ? cnpjInfo.documento : "",
+      nome: cnpjInfo ? cnpjInfo.nome : titulo.nome,
+      vencimento: titulo.vencimento,
+      databaixa: l.data,
+      valor: l.valor,
+      juros:0, multa:0, desconto:0, pis:0, cofins:0, csll:0, irrf:0,
+      statusClass: !cnpjInfo ? "err" : (cnpjInfo.exato ? null : "warn"),
+      statusText: !cnpjInfo ? "CNPJ não encontrado no cadastro" : (cnpjInfo.exato ? "OK" : "Casado por nome parecido — CONFERIR CNPJ"),
+      incluir: true,
+    });
+  });
+
+  renderResultBaixa(empresaNome, empresaCnpj, semExtrato);
+}
+
+function renderResultBaixa(empresaNome, empresaCnpj, semExtrato){
+  const box = document.getElementById("resultBaixaCard");
+  box.classList.remove("hidden");
+  const nOk = baixaRowsState.filter(r=>!r.statusClass).length;
+  const nWarn = baixaRowsState.filter(r=>r.statusClass==="warn").length;
+  const nErr = baixaRowsState.filter(r=>r.statusClass==="err").length;
+  let html = `<div class="section-title">${empresaNome||"Gladius"} — baixa_ser.txt</div>
+  <div class="summary-row">
+    <div class="item"><div class="k">Casados</div><div class="v">${baixaRowsState.length}</div></div>
+    <div class="item"><div class="k">OK</div><div class="v">${nOk}</div></div>
+    <div class="item"><div class="k">Conferir</div><div class="v">${nWarn}</div></div>
+    <div class="item"><div class="k">CNPJ pendente</div><div class="v">${nErr}</div></div>
+    <div class="item"><div class="k">Extrato sem título/NF</div><div class="v">${semExtrato.length}</div></div>
+  </div>
+  <div class="help">Vermelho = CNPJ não encontrado no cadastro compartilhado — solte o relatório de Clientes no card abaixo, ou preencha à mão. <b>Amarelo = casou o cliente só por nome parecido</b> (o cadastro ainda não tem o código de cliente da Gladius vinculado a esse CNPJ) — confira se o CNPJ é mesmo desse cliente antes de exportar; importar o relatório de Clientes da Gladius resolve isso pra sempre. Campos são editáveis.</div>
+  <div class="table-wrap"><table class="preview"><thead><tr>
+    <th>Incluir</th><th>Nº Nota</th><th>CNPJ/CPF</th><th>Nome</th><th>Vencimento</th><th>Data Baixa</th><th>Valor Recebido</th><th>Status</th><th></th>
+  </tr></thead><tbody>` +
+  baixaRowsState.map((r,i)=>`<tr class="${r.statusClass||''}">
+    <td class="cell" style="text-align:center"><input type="checkbox" ${r.incluir?"checked":""} onchange="updateBaixaRow(${i},'incluir',this.checked)"></td>
+    <td class="cell"><input class="cell-input" value="${r.numero}" onchange="updateBaixaRow(${i},'numero',this.value)"></td>
+    <td class="cell"><input class="cell-input wide" value="${r.cnpj}" onchange="updateBaixaRow(${i},'cnpj',this.value)"></td>
+    <td>${r.nome||""}</td>
+    <td class="cell"><input class="cell-input" value="${fmtDateBR(r.vencimento)}" onchange="updateBaixaRow(${i},'vencimento',this.value)"></td>
+    <td class="cell"><input class="cell-input" value="${fmtDateBR(r.databaixa)}" onchange="updateBaixaRow(${i},'databaixa',this.value)"></td>
+    <td class="cell"><input class="cell-input num" value="${fmtBRL(r.valor)}" onchange="updateBaixaRow(${i},'valor',this.value)"></td>
+    <td>${r.statusText}</td>
+    <td><button class="btn small ghost" onclick="removeBaixaRow(${i})">✕</button></td>
+  </tr>`).join("") + `</tbody></table></div>
+  <div class="btn-row">
+    <button class="btn" onclick="downloadBaixaXlsx()">Baixar baixa_servicos.xlsx</button>
+    <button class="btn ghost" onclick="downloadBaixaTxt()">Baixar baixa_ser.txt</button>
+  </div>`;
+  box.innerHTML = html;
+  window._baixaCtx = {empresaNome, empresaCnpj, semExtrato};
+}
+function updateBaixaRow(i, field, val){
+  const r = baixaRowsState[i];
+  if(field==="incluir"){ r.incluir=!!val; }
+  else if(field==="vencimento" || field==="databaixa"){ const dt=brDateToParts(val); if(dt) r[field]=dt; }
+  else if(field==="valor"){ const n=parseBRL(val); if(n!=null) r.valor=n; }
+  else if(field==="cnpj"){
+    r.cnpj = formatCnpjCpf(val);
+    const cl = classifyDocumento(r.cnpj);
+    r.statusClass = cl.valido ? null : "err";
+    r.statusText = cl.valido ? "OK" : "CNPJ/CPF inválido";
+  }
+  else { r[field]=val; }
+  renderResultBaixa(window._baixaCtx.empresaNome, window._baixaCtx.empresaCnpj, window._baixaCtx.semExtrato);
+}
+function removeBaixaRow(i){ baixaRowsState.splice(i,1); renderResultBaixa(window._baixaCtx.empresaNome, window._baixaCtx.empresaCnpj, window._baixaCtx.semExtrato); }
+
+function baixaRowArray(r){ return [r.numero, onlyDigits(r.cnpj), fmtDateBR(r.vencimento), fmtDateBR(r.databaixa), r.valor, r.juros, r.multa, r.desconto, r.pis, r.cofins, r.csll, r.irrf]; }
+function downloadBaixaXlsx(){
+  const rows = baixaRowsState.filter(r=>r.incluir);
+  if(!rows.length){ alert("Nenhuma linha marcada."); return; }
+  const header = ["Número da Nota","CNPJ/CPF","Data de Vencimento da Parcela","Data da Baixa da Parcela","Valor Recebido","Valor Juros","Valor Multa","Valor Desconto","Valor PIS","Valor COFINS","Valor CSLL","Valor IRRF"];
+  downloadXlsx("baixa_servicos_gladius.xlsx", [header, ...rows.map(baixaRowArray)], "Baixa");
+}
+function downloadBaixaTxt(){
+  const rows = baixaRowsState.filter(r=>r.incluir);
+  if(!rows.length){ alert("Nenhuma linha marcada."); return; }
+  const naoValidas = rows.filter(r=>!classifyDocumento(r.cnpj).valido);
+  if(naoValidas.length && !confirm(`${naoValidas.length} linha(s) com CNPJ/CPF ausente ou inválido. Gerar mesmo assim?`)) return;
+  const lines = rows.map(r=> baixaRowArray(r).map((v,i)=> i>=4 ? fmtValorTxt(v) : v).join(";"));
+  downloadText("baixa_ser.txt", lines.join("\r\n") + "\r\n");
+}
+
+/* =========================================================================
+   BAIXA DE ENTRADAS — Contas a Pagar por Fornecedor × extrato bancário
+   (casamento por soma exata dentro de janela de dias — o extrato não cita
+   o número da nota nem o nome do fornecedor de forma confiável aqui, então
+   valor+data é a única âncora segura; nunca aproxima)
+   ========================================================================= */
+async function readExtratoDebitos(file){
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, {type:"array", cellDates:false});
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true});
+  let headerRow=-1, dataCol=-1, descCol=-1, valorCol=-1;
+  for(let i=0;i<rows.length;i++){
+    const r = rows[i]; if(!r) continue;
+    const idx = r.findIndex(c=>String(c).trim().toLowerCase()==="data");
+    if(idx>=0){
+      headerRow=i; dataCol=idx;
+      const dIdx = r.findIndex((c,j)=> j!==idx && /descri.{0,3}o|hist.rico/i.test(String(c)));
+      descCol = dIdx>=0 ? dIdx : idx+1;
+      const vIdx = r.findIndex((c,j)=> j!==idx && j!==descCol && /valor|movimenta.{0,3}o/i.test(String(c)));
+      valorCol = vIdx>=0 ? vIdx : descCol+1;
+      break;
+    }
+  }
+  if(headerRow<0) throw new Error('Não encontrei uma coluna "Data" na primeira planilha do Excel.');
+  const out = [];
+  for(let i=headerRow+1;i<rows.length;i++){
+    const r = rows[i];
+    if(!r || r[dataCol]==null) continue;
+    const rawValor = r[valorCol];
+    const valor = typeof rawValor==="number" ? rawValor : parseBRL(rawValor);
+    if(valor==null || valor>=0) continue; // só débitos
+    let dt;
+    if(typeof r[dataCol]==="number") dt = excelDateToParts(r[dataCol]);
+    else dt = brDateToParts(r[dataCol]);
+    if(!dt) continue;
+    out.push({data:dt, descricao:String(r[descCol]??"").trim(), valor:Math.abs(valor)});
+  }
+  return out;
+}
+
+function diffDays(a,b){ return Math.round((partsToDate(a)-partsToDate(b))/86400000); }
+function dpSubsetExact(pool, targetCents){
+  const n = pool.length;
+  const vals = pool.map(p=>p._cents);
+  const order = [...Array(n).keys()].sort((a,b)=>vals[b]-vals[a]);
+  let result = null;
+  function rec(i, remaining, chosen){
+    if(result) return;
+    if(remaining===0){ result = chosen.slice(); return; }
+    if(i>=n || remaining<0) return;
+    let rest = 0;
+    for(let j=i;j<n;j++) rest += vals[order[j]];
+    if(rest < remaining) return;
+    const idx = order[i];
+    chosen.push(idx);
+    rec(i+1, remaining-vals[idx], chosen);
+    chosen.pop();
+    if(result) return;
+    rec(i+1, remaining, chosen);
+  }
+  rec(0, targetCents, []);
+  return result ? result.map(i=>pool[i]) : null;
+}
+// Um pagamento nunca mistura títulos de fornecedores diferentes — busca de
+// subconjunto roda separada por fornecedor. Se mais de um fornecedor bate
+// exato no mesmo valor/janela, fica ambíguo de propósito (nunca chuta).
+const WINDOWS_ENTRADAS = [[0,10],[-5,30],[-15,90],[-30,240]];
+function matchEntradas(lumps, abertos){
+  abertos.forEach(a=>{ a._cents = Math.round(a.valorEfetivo*100); a._used = false; });
+  const porCodigo = {};
+  abertos.forEach(a=>{ (porCodigo[a.codigo] = porCodigo[a.codigo]||[]).push(a); });
+  const codigos = Object.keys(porCodigo);
+  const results = {}, ambiguous = {}, wideResolved = new Set();
+  let remaining = lumps.map((_,i)=>i);
+  for(let passNo=0; passNo<WINDOWS_ENTRADAS.length; passNo++){
+    const [wlo, whi] = WINDOWS_ENTRADAS[passNo];
+    const still = [];
+    remaining.forEach(idx=>{
+      const targetCents = Math.round(lumps[idx].valor*100);
+      const candidatos = [];
+      codigos.forEach(cod=>{
+        const pool = porCodigo[cod].filter(a=> !a._used && diffDays(lumps[idx].data, a.vencimento)>=wlo && diffDays(lumps[idx].data, a.vencimento)<=whi);
+        if(!pool.length) return;
+        const found = dpSubsetExact(pool, targetCents);
+        if(found) candidatos.push({codigo:cod, found});
+      });
+      if(candidatos.length===1){
+        candidatos[0].found.forEach(a=>a._used=true);
+        results[idx] = candidatos[0].found;
+        if(passNo>0) wideResolved.add(idx);
+      } else if(candidatos.length>1){
+        ambiguous[idx] = candidatos.map(c=>({codigo:c.codigo, nome:c.found[0].nome}));
+        still.push(idx);
+      } else {
+        still.push(idx);
+      }
+    });
+    remaining = still;
+  }
+  return {results, wideResolved, unmatchedLumpIdx:remaining, ambiguous};
+}
+
+let contasPagarState = null, extratoEntradasState = null;
+function checkEntradasBtn(){
+  document.getElementById("processEntradasBtn").disabled = !(contasPagarState && extratoEntradasState);
+}
+wireDropzone("contasPagarDrop","contasPagarFile", async (f,d)=>{
+  try{
+    contasPagarState = await parseContasPdf(f);
+    markDropDone(d, contasPagarState.titulos.length + " título(s) — " + (contasPagarState.empresaNome||""));
+    checkEntradasBtn();
+  }catch(err){ alert("Erro ao ler PDF: " + err.message); }
+});
+wireDropzone("extratoEntradasDrop","extratoEntradasFile", async (f,d)=>{
+  try{
+    extratoEntradasState = await readExtratoDebitos(f);
+    markDropDone(d, extratoEntradasState.length + " débito(s) do extrato");
+    checkEntradasBtn();
+  }catch(err){ alert("Erro ao ler Excel: " + err.message); }
+});
+
+let entradasRowsState = [];
+function processarEntradas(){
+  const {empresaNome, empresaCnpj, titulos} = contasPagarState;
+  const abertos = titulos.map(t=>({...t, valorEfetivo: t.valorRecebido || t.valorParcela}));
+  const {results, wideResolved, unmatchedLumpIdx, ambiguous} = matchEntradas(extratoEntradasState, abertos);
+
+  entradasRowsState = [];
+  Object.keys(results).forEach(idxStr=>{
+    const idx = Number(idxStr);
+    const lump = extratoEntradasState[idx];
+    results[idx].forEach(titulo=>{
+      const cnpjInfo = resolverCnpj(empresaCnpj, "fornecedor", titulo.codigo, titulo.nome);
+      entradasRowsState.push({
+        numero: titulo.documento,
+        cnpj: cnpjInfo ? cnpjInfo.documento : "",
+        nome: cnpjInfo ? cnpjInfo.nome : titulo.nome,
+        vencimento: titulo.vencimento,
+        databaixa: lump.data,
+        valor: titulo.valorEfetivo,
+        juros:0, multa:0, desconto:0,
+        statusClass: !cnpjInfo ? "err" : (wideResolved.has(idx) ? "warn" : (cnpjInfo.exato ? null : "warn")),
+        statusText: !cnpjInfo ? "CNPJ não encontrado no cadastro" : (wideResolved.has(idx) ? "Casado em janela larga — conferir" : (cnpjInfo.exato ? "OK" : "Casado por nome parecido — CONFERIR CNPJ")),
+        incluir: true,
+      });
+    });
+  });
+  const semTitulo = unmatchedLumpIdx.map(i=>extratoEntradasState[i]);
+  const ambiguousList = Object.keys(ambiguous).map(i=>({...extratoEntradasState[i], candidatos: ambiguous[i].map(c=>c.nome)}));
+  renderResultEntradas(empresaNome, empresaCnpj, semTitulo, ambiguousList);
+}
+
+function renderResultEntradas(empresaNome, empresaCnpj, semTitulo, ambiguousList){
+  const box = document.getElementById("resultEntradasCard");
+  box.classList.remove("hidden");
+  const nOk = entradasRowsState.filter(r=>!r.statusClass).length;
+  const nWarn = entradasRowsState.filter(r=>r.statusClass==="warn").length;
+  const nErr = entradasRowsState.filter(r=>r.statusClass==="err").length;
+  let html = `<div class="section-title">${empresaNome||"Gladius"} — baixa_ent.txt</div>
+  <div class="summary-row">
+    <div class="item"><div class="k">Casados</div><div class="v">${entradasRowsState.length}</div></div>
+    <div class="item"><div class="k">OK</div><div class="v">${nOk}</div></div>
+    <div class="item"><div class="k">Conferir</div><div class="v">${nWarn}</div></div>
+    <div class="item"><div class="k">CNPJ pendente</div><div class="v">${nErr}</div></div>
+    <div class="item"><div class="k">Extrato sem título</div><div class="v">${semTitulo.length}</div></div>
+    ${ambiguousList.length ? `<div class="item"><div class="k">Ambíguos</div><div class="v">${ambiguousList.length}</div></div>` : ""}
+  </div>
+  ${ambiguousList.length ? `<div class="status-line err">Atenção: ${ambiguousList.length} pagamento(s) do extrato batem com o valor de títulos abertos de <b>mais de um fornecedor</b> — não escolhi nenhum sozinho pra não arriscar vincular o fornecedor errado. Confira à mão: ${ambiguousList.map(a=>`${fmtDateBR(a.data)} ${fmtBRL(a.valor)} (${a.candidatos.join(" OU ")})`).join("; ")}</div>` : ""}
+  <div class="help">Vermelho = CNPJ não encontrado; amarelo = casou só em janela larga entre vencimento e pagamento, ou só por nome parecido no cadastro — confira antes de exportar. Campos são editáveis.</div>
+  <div class="table-wrap"><table class="preview"><thead><tr>
+    <th>Incluir</th><th>Nº Nota</th><th>CNPJ/CPF</th><th>Nome</th><th>Vencimento</th><th>Data Baixa</th><th>Valor Pago</th><th>Status</th><th></th>
+  </tr></thead><tbody>` +
+  entradasRowsState.map((r,i)=>`<tr class="${r.statusClass||''}">
+    <td class="cell" style="text-align:center"><input type="checkbox" ${r.incluir?"checked":""} onchange="updateEntradasRow(${i},'incluir',this.checked)"></td>
+    <td class="cell"><input class="cell-input" value="${r.numero}" onchange="updateEntradasRow(${i},'numero',this.value)"></td>
+    <td class="cell"><input class="cell-input wide" value="${r.cnpj}" onchange="updateEntradasRow(${i},'cnpj',this.value)"></td>
+    <td>${r.nome||""}</td>
+    <td class="cell"><input class="cell-input" value="${fmtDateBR(r.vencimento)}" onchange="updateEntradasRow(${i},'vencimento',this.value)"></td>
+    <td class="cell"><input class="cell-input" value="${fmtDateBR(r.databaixa)}" onchange="updateEntradasRow(${i},'databaixa',this.value)"></td>
+    <td class="cell"><input class="cell-input num" value="${fmtBRL(r.valor)}" onchange="updateEntradasRow(${i},'valor',this.value)"></td>
+    <td>${r.statusText}</td>
+    <td><button class="btn small ghost" onclick="removeEntradasRow(${i})">✕</button></td>
+  </tr>`).join("") + `</tbody></table></div>
+  <div class="btn-row">
+    <button class="btn" onclick="downloadEntradasXlsx()">Baixar baixa_entradas.xlsx</button>
+    <button class="btn ghost" onclick="downloadEntradasTxt()">Baixar baixa_ent.txt</button>
+  </div>`;
+  box.innerHTML = html;
+  window._entradasCtx = {empresaNome, empresaCnpj, semTitulo, ambiguousList};
+}
+function updateEntradasRow(i, field, val){
+  const r = entradasRowsState[i];
+  if(field==="incluir"){ r.incluir=!!val; }
+  else if(field==="vencimento" || field==="databaixa"){ const dt=brDateToParts(val); if(dt) r[field]=dt; }
+  else if(field==="valor"){ const n=parseBRL(val); if(n!=null) r.valor=n; }
+  else if(field==="cnpj"){
+    r.cnpj = formatCnpjCpf(val);
+    const cl = classifyDocumento(r.cnpj);
+    r.statusClass = cl.valido ? null : "err";
+    r.statusText = cl.valido ? "OK" : "CNPJ/CPF inválido";
+  }
+  else { r[field]=val; }
+  renderResultEntradas(window._entradasCtx.empresaNome, window._entradasCtx.empresaCnpj, window._entradasCtx.semTitulo, window._entradasCtx.ambiguousList);
+}
+function removeEntradasRow(i){ entradasRowsState.splice(i,1); renderResultEntradas(window._entradasCtx.empresaNome, window._entradasCtx.empresaCnpj, window._entradasCtx.semTitulo, window._entradasCtx.ambiguousList); }
+
+function entradasRowArray(r){ return [r.numero, onlyDigits(r.cnpj), fmtDateBR(r.vencimento), fmtDateBR(r.databaixa), r.valor, r.juros, r.multa, r.desconto]; }
+function downloadEntradasXlsx(){
+  const rows = entradasRowsState.filter(r=>r.incluir);
+  if(!rows.length){ alert("Nenhuma linha marcada."); return; }
+  const header = ["Número da Nota","CNPJ/CPF","Data de Vencimento da Parcela","Data da Baixa da Parcela","Valor Pago","Valor Juros","Valor Multa","Valor Desconto"];
+  downloadXlsx("baixa_entradas_gladius.xlsx", [header, ...rows.map(entradasRowArray)], "Baixa");
+}
+function downloadEntradasTxt(){
+  const rows = entradasRowsState.filter(r=>r.incluir);
+  if(!rows.length){ alert("Nenhuma linha marcada."); return; }
+  const naoValidas = rows.filter(r=>!classifyDocumento(r.cnpj).valido);
+  if(naoValidas.length && !confirm(`${naoValidas.length} linha(s) com CNPJ/CPF ausente ou inválido. Gerar mesmo assim?`)) return;
+  const lines = rows.map(r=> entradasRowArray(r).map((v,i)=> i>=4 ? fmtValorTxt(v) : v).join(";"));
+  downloadText("baixa_ent.txt", lines.join("\r\n") + "\r\n");
+}
+
+/* =========================================================================
+   CADASTRO CNPJ (fallback) — leitura de Clientes.pdf ou Fornecedores.pdf
+   ========================================================================= */
+function parseClientesPdf(allLines){
+  const out = [];
+  const headerRe = /^\s*(\d{1,6})\s+(.+?)\s+(CNPJ|CPF|Outros)\s+([\d.\/-]*)/;
+  const cityRe = /^(.+?)\s+([A-Z]{2})\s+(\d{5}-\d{3}|-)(?=\s|$)/;
+  for(let i=0;i<allLines.length;i++){
+    const hm = allLines[i].match(headerRe);
+    if(!hm) continue;
+    const [, codigo, nomeRaw, tipo, docRaw] = hm;
+    const doc = onlyDigits(docRaw);
+    if(!doc) continue;
+    let municipio="", uf="";
+    for(let j=i+1;j<=i+2 && j<allLines.length;j++){
+      const cm = allLines[j].match(cityRe);
+      if(cm){ municipio=cm[1].trim(); uf=cm[2]; break; }
+    }
+    let razao = nomeRaw.replace(new RegExp("^"+codigo+"\\s*"),"").trim();
+    out.push({codigo, documento:doc, tipo: doc.length===14?"CNPJ":"CPF", razao_social: razao, endereco:"", municipio, uf, cep:""});
+  }
+  return out;
+}
+const BR_UFS = {"ACRE":"AC","ALAGOAS":"AL","AMAPA":"AP","AMAZONAS":"AM","BAHIA":"BA","CEARA":"CE","DISTRITO FEDERAL":"DF","ESPIRITO SANTO":"ES","GOIAS":"GO","MARANHAO":"MA","MATO GROSSO DO SUL":"MS","MATO GROSSO":"MT","MINAS GERAIS":"MG","PARAIBA":"PB","PARANA":"PR","PERNAMBUCO":"PE","PIAUI":"PI","RIO DE JANEIRO":"RJ","RIO GRANDE DO NORTE":"RN","RIO GRANDE DO SUL":"RS","RONDONIA":"RO","RORAIMA":"RR","SANTA CATARINA":"SC","SAO PAULO":"SP","SERGIPE":"SE","TOCANTINS":"TO","PARA":"PA"};
+const BR_UF_NAMES = Object.keys(BR_UFS).sort((a,b)=>b.length-a.length);
+const DOC_RE = /(\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}|\d{3}\.\d{3}\.\d{3}-\d{2})/;
+function splitCidadeUfPais(tail){
+  let t = normalizeText(tail).replace(/\bBRASIL\b\s*$/,"").trim();
+  t = t.replace(/^\d{4,12}\s+/,"");
+  for(const name of BR_UF_NAMES){
+    const re = new RegExp("\\s+"+name+"$");
+    if(re.test(t)) return {municipio: t.replace(re,"").trim(), uf: BR_UFS[name]};
+  }
+  return {municipio: t.trim(), uf: ""};
+}
+function parseFornecedoresPdf(allLines){
+  const out = [];
+  allLines.forEach(line=>{
+    if(!/BRASIL\s*$/i.test(line)) return;
+    const m = line.match(DOC_RE);
+    if(!m) return;
+    const before = line.slice(0, m.index).trim();
+    const after = line.slice(m.index + m[0].length).trim();
+    const codMatch = before.match(/^(\d{1,6})\s*(.*)$/);
+    const codigo = codMatch ? codMatch[1] : null;
+    const nome = (codMatch ? codMatch[2] : before).trim();
+    if(!nome) return;
+    const {municipio, uf} = splitCidadeUfPais(after);
+    out.push({codigo, documento:onlyDigits(m[0]), tipo: onlyDigits(m[0]).length===14?"CNPJ":"CPF", razao_social: nome, endereco:"", municipio, uf, cep:""});
+  });
+  return out;
+}
+let cnpjHelperEmpresaCnpj = null;
+wireDropzone("cadPdfDrop","cadPdfFile", async (f,d)=>{
+  const status = document.getElementById("cadPdfStatus");
+  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo PDF...";
+  try{
+    const pages = await extractPdfAllLines(f);
+    const allLines = pages.flat();
+    const em = allLines.join("\n").match(CNPJ_HEADER_RE);
+    if(em) cnpjHelperEmpresaCnpj = onlyDigits(em[1]);
+    const isFornecedores = allLines.some(l=>/^FORNECEDORES$/i.test(l.trim()));
+    const isClientes = allLines.some(l=>/C.digo\s+Nome\s+Raz.o Social/i.test(l));
+    let parsed = [], tipoTitulo = "cliente";
+    if(isFornecedores){ parsed = parseFornecedoresPdf(allLines); tipoTitulo = "fornecedor"; }
+    else if(isClientes){ parsed = parseClientesPdf(allLines); tipoTitulo = "cliente"; }
+    else {
+      const a = parseFornecedoresPdf(allLines), b = parseClientesPdf(allLines);
+      if(a.length>=b.length){ parsed=a; tipoTitulo="fornecedor"; } else { parsed=b; tipoTitulo="cliente"; }
+    }
+    if(!parsed.length) throw new Error("Não consegui reconhecer nenhum registro nesse PDF.");
+    let addedCli=0, updatedCod=0;
+    const dirty = {};
+    parsed.forEach(p=>{
+      if(!p.documento) return;
+      if(!clientesDB[p.documento]){
+        clientesDB[p.documento] = {documento:p.documento, tipo:p.tipo, razao_social:p.razao_social, endereco:p.endereco, municipio:p.municipio, uf:p.uf, cep:"", codigos:{}, fonte:"importado-lancamentos-gladius"};
+        addedCli++;
+      }
+      if(!clientesDB[p.documento].codigos) clientesDB[p.documento].codigos = {};
+      if(p.codigo && cnpjHelperEmpresaCnpj){
+        const chave = `${cnpjHelperEmpresaCnpj}_${tipoTitulo}`;
+        if(clientesDB[p.documento].codigos[chave] !== p.codigo){
+          clientesDB[p.documento].codigos[chave] = p.codigo;
+          updatedCod++;
+        }
+      }
+      dirty[p.documento] = clientesDB[p.documento];
+    });
+    rebuildCodigoIndex();
+    if(window.gladiusCloud) window.gladiusCloud.pushManyClientes(dirty);
+    status.classList.add("ok");
+    status.textContent = `Cadastro atualizado: ${addedCli} registro(s) novo(s), ${updatedCod} código(s) vinculado(s). Reprocessando...`;
+    if(baixaRowsState.length) processarBaixaServicos();
+    if(entradasRowsState.length) processarEntradas();
+  }catch(err){
+    status.classList.add("err"); status.textContent = "Erro: " + err.message;
+  }
+});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+// Mesmo projeto Firebase e mesma collection "clientes" que as outras
+// ferramentas do escritório já usam — banco de CNPJ único compartilhado.
+const firebaseConfig = {
+  apiKey: "AIzaSyCBIQkYYNt3K4gZ0OGqoqsU8Jnrsgxif5k",
+  authDomain: "conversoes-cibele.firebaseapp.com",
+  projectId: "conversoes-cibele",
+  storageBucket: "conversoes-cibele.firebasestorage.app",
+  messagingSenderId: "401784315449",
+  appId: "1:401784315449:web:5d459a524059c0978bb7e8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+let ready = false;
+
+function setCloudBadge(text, cls){
+  const el = document.getElementById("cloudStatus");
+  if(!el) return;
+  el.textContent = text; el.className = "badge " + (cls||"info");
+}
+setCloudBadge("Conectando à nuvem…", "warn");
+signInAnonymously(auth).catch(err=>{
+  console.error("Firebase auth error", err);
+  setCloudBadge("Nuvem indisponível — usando só este navegador", "err");
+});
+
+onAuthStateChanged(auth, (user)=>{
+  if(!user) return;
+  ready = true;
+  onSnapshot(collection(db, "clientes"), (snap)=>{
+    const cloudData = {};
+    snap.forEach(d=> cloudData[d.id] = d.data());
+    window.setClientesDB(cloudData);
+    setCloudBadge("Sincronizado com a nuvem", "ok");
+  }, err=>{ console.error("clientes onSnapshot", err); setCloudBadge("Erro de sincronização", "err"); });
+});
+
+window.gladiusCloud = {
+  pushManyClientes(obj){
+    if(!ready) return;
+    const keys = Object.keys(obj||{}); if(!keys.length) return;
+    const batch = writeBatch(db);
+    keys.forEach(k=> batch.set(doc(db,"clientes",k), obj[k]));
+    batch.commit().catch(e=>console.error("pushManyClientes",e));
+  }
+};
+</script>
+</body>
+</html>
