@@ -123,50 +123,102 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
     </div>
   </div>
 
-  <!-- ===================== UPLOAD ÚNICO — TODOS OS RELATÓRIOS ===================== -->
-  <div class="card" style="border-width:2.5px;">
-    <div class="section-title">Solte todos os relatórios do mês aqui</div>
-    <div class="help">Solte de uma vez: os PDFs de <b>Aplicação Financeira</b> (Posição da Carteira / Consolidado Taxa Selic), <b>Contas a Receber por Cliente</b>, <b>Contas a Pagar por Fornecedor</b>, o relatório de <b>Clientes/Fornecedores</b> (se precisar atualizar o cadastro de CNPJ) e o <b>extrato bancário</b> (Excel) — a ferramenta reconhece sozinha o tipo de cada arquivo e distribui pras seções certas abaixo. Depois clique em <b>Gerar Tudo</b> pra processar tudo de uma vez.</div>
-    <div class="dropzone" id="universalDropzone">
-      <div class="big" id="universalDzBig">Clique ou arraste todos os arquivos aqui</div>
-      <div class="small">PDFs e Excel, quantos quiser, de uma vez</div>
-      <input type="file" id="universalFileInput" accept=".pdf,.xlsx,.xls" multiple>
-    </div>
-    <div id="universalStatus" class="status-line hidden"></div>
-    <div class="btn-row"><button class="btn" id="gerarTudoBtn" disabled onclick="gerarTudo()">Gerar Tudo</button></div>
-    <div id="gerarTudoStatus" class="status-line hidden"></div>
-  </div>
-
-  <!-- ===================== APLICAÇÃO FINANCEIRA — UPLOAD ===================== -->
+  <!-- ===================== RELATÓRIOS DO MÊS ===================== -->
   <div class="card">
-    <div class="section-title">Aplicação Financeira SICREDI — Importação</div>
-    <div class="help">Solte aqui os relatórios <b>Posição da Carteira / Resgate Fácil</b> (um por título — conta 1077) e/ou o extrato <b>Consolidado Taxa Selic</b> (IBPJ Sicredi — conta 1249). Pode soltar vários arquivos de uma vez. Cada um vira um "grupo" abaixo — preencha o <b>Nome</b> (usado no histórico, ex. nome do processo/massa falida) e o <b>CNPJ</b> do cliente antes de gerar os lançamentos.</div>
-    <div class="dropzone" id="aplicDropzone">
-      <div class="big" id="aplicDzBig">Clique ou arraste os PDFs aqui</div>
-      <div class="small">Vários arquivos .pdf de uma vez</div>
-      <input type="file" id="aplicFileInput" accept="application/pdf" multiple>
+    <div class="section-title">Relatórios do Mês → Importações</div>
+    <div class="help">Solte aqui os relatórios do mês — cada campo lê o seu sozinho e fica pronto pra qualquer uma das 4 seções abaixo (Baixa de Entradas, Baixa de Serviços, Notas Fiscais de Serviço, Lançamentos Manuais) usar. O extrato bancário é único, compartilhado por todas.</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Aplicação Financeira SICREDI (PDF)</label>
+        <div class="dropzone small-drop" id="aplicDropzone"><div class="big" id="aplicDzBig">Arraste o(s) PDF(s) aqui</div><div class="small">Posição da Carteira / Consolidado Taxa Selic — pode soltar vários</div><input type="file" id="aplicFileInput" accept="application/pdf" multiple></div>
+      </div>
+      <div class="field">
+        <label>Contas a Receber por Cliente (PDF)</label>
+        <div class="dropzone small-drop" id="contasDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Pra Baixa de Serviços — lê sozinho a empresa (CNPJ)</div><input type="file" id="contasFile" accept="application/pdf"></div>
+      </div>
+      <div class="field">
+        <label>Contas a Pagar por Fornecedor (PDF)</label>
+        <div class="dropzone small-drop" id="contasPagarDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Pra Baixa de Entradas — lê sozinho a empresa (CNPJ)</div><input type="file" id="contasPagarFile" accept="application/pdf"></div>
+      </div>
+      <div class="field">
+        <label>Extrato Bancário (Excel)</label>
+        <div class="dropzone small-drop" id="extratoDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Colunas Data / Descrição / Movimentação — único pras 4 seções</div><input type="file" id="extratoFile" accept=".xlsx,.xls"></div>
+      </div>
+      <div class="field">
+        <label>Cadastro Clientes/Fornecedores (PDF, opcional)</label>
+        <div class="dropzone small-drop" id="cadPdfDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Só se precisar atualizar o CNPJ compartilhado do Hub</div><input type="file" id="cadPdfFile" accept="application/pdf"></div>
+      </div>
     </div>
     <div id="aplicUploadStatus" class="status-line hidden"></div>
+    <div id="cadPdfStatus" class="status-line hidden"></div>
   </div>
 
   <!-- ===================== GRUPOS (TÍTULOS) ===================== -->
   <div class="card hidden" id="boxGrupos">
-    <div class="section-title">Títulos/contas encontrados</div>
-    <div class="help">Confira a conta contábil detectada (1077 Resgate Fácil / 1249 Taxa Selic — troque se estiver errada) e preencha Nome/CNPJ do cliente responsável por cada título antes de gerar os lançamentos.</div>
+    <div class="section-title">Aplicação Financeira — títulos/contas encontrados</div>
+    <div class="help">Confira a conta contábil detectada (1077 Resgate Fácil / 1249 Taxa Selic — troque se estiver errada) e preencha Nome/CNPJ do cliente responsável por cada título antes de gerar Lançamentos Manuais ou Notas Fiscais de Serviço.</div>
     <div class="table-wrap"><table class="preview" id="gruposTable"></table></div>
-    <div class="btn-row">
-      <button class="btn" onclick="gerarLancamentosENF()">Gerar Lançamentos e Nota de Serviço</button>
-    </div>
-    <div id="gruposStatus" class="status-line hidden"></div>
   </div>
 
-  <!-- ===================== LANÇAMENTOS GERADOS ===================== -->
-  <div class="card hidden" id="boxLancamentos">
-    <div class="section-title">Lançamentos Contábeis — revise antes de exportar</div>
-    <div class="help">Junta os lançamentos da Aplicação Financeira (resgate/aporte/rendimento) com os do Extrato Geral (card mais abaixo) numa tabela só. Edite débito/crédito/valor/histórico clicando na célula.</div>
+  <!-- ===================== BAIXA DE ENTRADAS ===================== -->
+  <div class="card">
+    <div class="section-title">Baixa de Entradas</div>
+    <div class="help">Casa os débitos do extrato bancário com o relatório <b>Contas a Pagar por Fornecedor</b> — o extrato não cita o número da nota nem sempre o nome do fornecedor de forma confiável (ex. "Pagto NF Burn" pra um fornecedor cadastrado como "Ferreira Serviços..."), então o casamento é por <b>valor exato</b> dentro de uma janela de dias entre vencimento e pagamento — nunca aproxima. Um pagamento nunca mistura títulos de fornecedores diferentes. As parcelas do relatório podem já estar "Paga" — trata todas como candidatas, pra reconhecer o que foi pago no mês.</div>
+    <div class="btn-row"><button class="btn" id="processEntradasBtn" disabled onclick="processarEntradas()">Gerar Baixa de Entradas</button></div>
+    <div id="entradasStatus" class="status-line hidden"></div>
+  </div>
+
+  <div class="card hidden" id="resultEntradasCard"></div>
+
+  <!-- ===================== BAIXA DE SERVIÇOS ===================== -->
+  <div class="card">
+    <div class="section-title">Baixa de Serviços</div>
+    <div class="help">Casa o relatório <b>Contas a Receber por Cliente</b> com o extrato bancário — reconhece o número da nota direto no histórico do extrato (ex. "Recebimento NF 115 ..."), sem chute por valor/data. As parcelas do relatório podem já estar com Situação "Recebida" (baixadas fora do Domínio) — trata todas como se estivessem em aberto, pra reconhecer o que efetivamente entrou no banco no mês.</div>
+    <div class="btn-row"><button class="btn" id="processBaixaBtn" disabled onclick="processarBaixaServicos()">Gerar Baixa de Serviços</button></div>
+    <div id="baixaStatus" class="status-line hidden"></div>
+  </div>
+
+  <div class="card hidden" id="resultBaixaCard"></div>
+
+  <!-- ===================== NOTAS FISCAIS DE SERVIÇO ===================== -->
+  <div class="card">
+    <div class="section-title">Notas Fiscais de Serviço</div>
+    <div class="help">Um arquivo só, juntando dois tipos de nota: (1) os resgates de aplicação financeira (Posição da Carteira) — valor do serviço = capitalização de juros do mês, base de cálculo = IRRF ÷ 15%; (2) os recebimentos do extrato com "Alvará", "Honorários" ou "Aluguel" no histórico — valor do serviço = valor recebido (ajuste na tabela se a nota for só uma parte do valor). Número da NF fica em branco — preencha antes de importar no Domínio.</div>
+    <div class="field-row">
+      <div class="field"><label>Acumulador (resgates)</label><input type="text" id="nfAcumulador" value="46"></div>
+      <div class="field"><label>CFPS (resgates)</label><input type="text" id="nfCfps" value="9101"></div>
+      <div class="field"><label>CNPJ padrão (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraCnpjPadrao" value="04.443.827/0001-20"></div>
+      <div class="field"><label>Acumulador (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraAcumulador" value="2"></div>
+      <div class="field"><label>CFPS (Alvará/Honorários/Aluguel)</label><input type="text" id="alvaraCfps" value="9102"></div>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="gerarNotasFiscais()">Gerar Notas Fiscais de Serviço</button></div>
+    <div id="nfGeralStatus" class="status-line hidden"></div>
+  </div>
+
+  <div class="card hidden" id="boxNF">
+    <div class="section-title">Notas Fiscais de Serviço — revise antes de exportar</div>
+    <div class="help">Cada linha já traz seu próprio Acumulador/CFPS/CNPJ — editáveis. Linhas a débito do extrato (ex. devolução de aluguel) vêm desmarcadas por padrão — confira o valor certo antes de marcar.</div>
+    <div class="table-wrap"><table class="preview" id="nfTable"></table></div>
+    <div class="btn-row">
+      <button class="btn" onclick="downloadNFXlsx()">Baixar NFS.xlsx</button>
+      <button class="btn ghost" onclick="downloadNFTxt()">Baixar NFS.txt</button>
+    </div>
+  </div>
+
+  <!-- ===================== LANÇAMENTOS MANUAIS ===================== -->
+  <div class="card">
+    <div class="section-title">Lançamentos Manuais</div>
+    <div class="help">Um arquivo só, juntando dois tipos de lançamento: (1) aporte/resgate/rendimento da Aplicação Financeira; (2) o extrato bancário inteiro casado contra o cadastro de padrões abaixo (palavra-chave do histórico → contas — a direção Débito/Crédito é decidida pelo sinal real da transação, não fica fixa no cadastro). O que não bate com nenhum padrão vira uma linha só com a conta banco (744), marcada pra completar à mão; o que já é coberto pelas baixas ou pelas notas fiscais acima vem desmarcado, pra não duplicar na exportação.</div>
     <div class="field-row" style="max-width:320px;">
       <div class="field"><label>Código Emp. (Domínio)</label><input type="text" id="lancCodEmp" value="9"></div>
     </div>
+    <div class="btn-row"><button class="btn" onclick="gerarLancamentosManuais()">Gerar Lançamentos Manuais</button></div>
+    <div id="lancGeralStatus" class="status-line hidden"></div>
+  </div>
+
+  <div class="card hidden" id="boxLancamentos">
+    <div class="section-title">Lançamentos Manuais — revise antes de exportar</div>
+    <div class="help">Edite débito/crédito/valor/histórico clicando na célula.</div>
     <div class="table-wrap"><table class="preview" id="lancTable"></table></div>
     <div class="btn-row">
       <button class="btn" onclick="downloadLancXlsx()">Baixar lancamentos.xlsx</button>
@@ -174,24 +226,10 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
     </div>
   </div>
 
-  <!-- ===================== LANÇAMENTOS CONTÁBEIS — EXTRATO GERAL ===================== -->
-  <div class="card">
-    <div class="section-title">Lançamentos Contábeis — Extrato Geral</div>
-    <div class="help">Lê o extrato bancário inteiro e gera as linhas de razão pro Domínio, casando cada lançamento contra o cadastro de padrões abaixo (palavra-chave do histórico → contas). O que não bate com nenhum padrão vira uma linha só com a conta banco (744), marcada pra você completar à mão. Entra na mesma tabela de Lançamentos Contábeis acima, junto com os da Aplicação Financeira.</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Extrato bancário (Excel)</label>
-        <div class="dropzone small-drop" id="extratoGeralDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Colunas Data / Descrição / Movimentação</div><input type="file" id="extratoGeralFile" accept=".xlsx,.xls"></div>
-      </div>
-    </div>
-    <div class="btn-row"><button class="btn" id="processLancGeralBtn" disabled onclick="processarLancamentosExtrato()">Processar</button></div>
-    <div id="lancGeralStatus" class="status-line hidden"></div>
-  </div>
-
   <!-- ===================== CADASTRO: LANÇAMENTOS PADRÕES ===================== -->
   <div class="card">
     <div class="section-title">Cadastro — Lançamentos Padrões (Extrato Geral)</div>
-    <div class="help">De-para de palavra(s)-chave do histórico → conta contábil + histórico de saída, aplicado sozinho pra qualquer débito/crédito do extrato. A direção (Débito/Crédito de cada conta) é decidida pelo sinal real da transação no banco, não fixa no cadastro — assim funciona igual pra pagamento e eventual estorno/devolução do mesmo tipo. Padrões com valores fixos (aluguel), lançamento-espelho (distribuição de lucros → provisão) ou rótulo de mês dinâmico (condomínio, 2ª ocorrência do mesmo prédio no período usa mês atual em vez de anterior) só são editáveis via JSON.</div>
+    <div class="help">De-para de palavra(s)-chave do histórico → conta contábil + histórico de saída, aplicado sozinho pra qualquer débito/crédito do extrato. Padrões com valores fixos (aluguel), lançamento-espelho (distribuição de lucros → provisão) ou rótulo de mês dinâmico (condomínio) só são editáveis via JSON.</div>
     <div class="table-wrap"><table class="preview" id="padroesTable"></table></div>
     <div class="btn-row">
       <button class="btn ghost" onclick="togglePadroesJson()">Editar via JSON</button>
@@ -201,91 +239,6 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
       <div class="btn-row"><button class="btn small" onclick="salvarPadroesJson()">Salvar</button></div>
       <div id="padroesJsonStatus" class="status-line hidden"></div>
     </div>
-  </div>
-
-  <!-- ===================== NOTA DE SERVIÇO GERADA ===================== -->
-  <div class="card hidden" id="boxNF">
-    <div class="section-title">Nota de Serviço — revise antes de exportar</div>
-    <div class="help">Junta as notas dos resgates de aplicação (Acumulador/CFPS/CNPJ vêm dos campos abaixo, no momento em que são geradas) com as notas de recebimentos do extrato (Alvará/Honorários/Aluguel, card mais abaixo). Cada linha já traz seu próprio Acumulador/CFPS/CNPJ — editáveis depois de gerada. Número da NF fica em branco — preencha antes de importar no Domínio.</div>
-    <div class="field-row" style="max-width:420px;">
-      <div class="field"><label>Acumulador (resgates)</label><input type="text" id="nfAcumulador" value="46"></div>
-      <div class="field"><label>CFPS (resgates)</label><input type="text" id="nfCfps" value="9101"></div>
-    </div>
-    <div class="table-wrap"><table class="preview" id="nfTable"></table></div>
-    <div class="btn-row">
-      <button class="btn" onclick="downloadNFXlsx()">Baixar NFS.xlsx</button>
-      <button class="btn ghost" onclick="downloadNFTxt()">Baixar NFS.txt</button>
-    </div>
-  </div>
-
-  <!-- ===================== NF — RECEBIMENTOS DO EXTRATO (ALVARÁ/HONORÁRIOS/ALUGUEL) ===================== -->
-  <div class="card">
-    <div class="section-title">Nota de Serviço — Recebimentos do Extrato (Alvará/Honorários/Aluguel)</div>
-    <div class="help">Lê o extrato bancário e detecta sozinho as linhas com "Alvará", "Honorários" ou "Aluguel" na descrição — cada uma vira uma Nota de Serviço pelo valor recebido (edite o valor quando a nota for por um valor diferente do total da transação, ex. um recebimento que mistura mais de uma coisa). Linhas a débito (ex. devolução de aluguel) vêm desmarcadas por padrão — confira o valor certo antes de marcar. CNPJ/Acumulador/CFPS abaixo são o padrão aplicado às linhas marcadas; edite por linha depois de adicionar.</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Extrato bancário (Excel)</label>
-        <div class="dropzone small-drop" id="extratoAlvaraDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Mesmo formato Data / Descrição / Movimentação</div><input type="file" id="extratoAlvaraFile" accept=".xlsx,.xls"></div>
-      </div>
-    </div>
-    <div class="field-row" style="max-width:640px;">
-      <div class="field"><label>CNPJ padrão do cliente</label><input type="text" id="alvaraCnpjPadrao" value="04.443.827/0001-20"></div>
-      <div class="field"><label>Acumulador</label><input type="text" id="alvaraAcumulador" value="2"></div>
-      <div class="field"><label>CFPS</label><input type="text" id="alvaraCfps" value="9102"></div>
-    </div>
-    <div id="boxAlvaraTabela" class="hidden">
-      <div class="table-wrap"><table class="preview" id="alvaraTable"></table></div>
-      <div class="btn-row"><button class="btn" onclick="adicionarAlvaraNF()">Adicionar linhas marcadas à Nota de Serviço</button></div>
-    </div>
-    <div id="alvaraStatus" class="status-line hidden"></div>
-  </div>
-
-  <!-- ===================== BAIXA DE SERVIÇOS ===================== -->
-  <div class="card">
-    <div class="section-title">Baixa de Serviços</div>
-    <div class="help">Casa o relatório <b>Contas a Receber por Cliente</b> do Domínio com o extrato bancário — reconhece o número da nota direto no histórico do extrato (ex. "Recebimento NF 115 ..."), sem chute por valor/data. As parcelas do relatório podem já estar com Situação "Recebida" (baixadas fora do Domínio) — a ferramenta trata todas como se estivessem em aberto, pra reconhecer o que efetivamente entrou no banco no mês. O cadastro de CNPJ é o mesmo compartilhado com o resto do escritório.</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Contas a Receber por Cliente (PDF)</label>
-        <div class="dropzone small-drop" id="contasDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Lê sozinho a empresa (CNPJ) do cabeçalho do relatório</div><input type="file" id="contasFile" accept="application/pdf"></div>
-      </div>
-      <div class="field">
-        <label>Extrato bancário (Excel)</label>
-        <div class="dropzone small-drop" id="extratoDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Colunas Data / Descrição / Movimentação (ou Saldo)</div><input type="file" id="extratoFile" accept=".xlsx,.xls"></div>
-      </div>
-    </div>
-    <div class="btn-row"><button class="btn" id="processBaixaBtn" disabled onclick="processarBaixaServicos()">Processar</button></div>
-    <div id="baixaStatus" class="status-line hidden"></div>
-  </div>
-
-  <div class="card hidden" id="resultBaixaCard"></div>
-
-  <!-- ===================== BAIXA DE ENTRADAS ===================== -->
-  <div class="card">
-    <div class="section-title">Baixa de Entradas</div>
-    <div class="help">Casa os débitos do extrato bancário com o relatório <b>Contas a Pagar por Fornecedor</b> — diferente da Baixa de Serviços, o extrato aqui não cita o número da nota nem sempre o nome do fornecedor de forma confiável (ex. "Pagto NF Burn" pra um fornecedor cadastrado como "Ferreira Serviços..."), então o casamento é por <b>valor exato</b> dentro de uma janela de dias entre vencimento e pagamento — nunca aproxima. Um pagamento nunca mistura títulos de fornecedores diferentes. As parcelas do relatório podem já estar "Paga" — a ferramenta trata todas como candidatas, pra reconhecer o que foi pago no mês.</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Contas a Pagar por Fornecedor (PDF)</label>
-        <div class="dropzone small-drop" id="contasPagarDrop"><div class="big">Arraste o PDF aqui</div><div class="small">Lê sozinho a empresa (CNPJ) do cabeçalho do relatório</div><input type="file" id="contasPagarFile" accept="application/pdf"></div>
-      </div>
-      <div class="field">
-        <label>Extrato bancário (Excel)</label>
-        <div class="dropzone small-drop" id="extratoEntradasDrop"><div class="big">Arraste o Excel aqui</div><div class="small">Considera só os débitos (valores negativos)</div><input type="file" id="extratoEntradasFile" accept=".xlsx,.xls"></div>
-      </div>
-    </div>
-    <div class="btn-row"><button class="btn" id="processEntradasBtn" disabled onclick="processarEntradas()">Processar</button></div>
-    <div id="entradasStatus" class="status-line hidden"></div>
-  </div>
-
-  <div class="card hidden" id="resultEntradasCard"></div>
-
-  <!-- ===================== CADASTRO CNPJ (fallback) ===================== -->
-  <div class="card">
-    <div class="section-title">CNPJs não encontrados — importar cadastro</div>
-    <div class="help">Solte aqui o relatório de <b>Clientes</b> ou <b>Fornecedores</b> do Domínio da Gladius — atualiza o cadastro compartilhado do escritório (mesmo banco usado pela Conversões Cibele, Baixas de Parcelas etc.) e já resolve as linhas pendentes na hora.</div>
-    <div class="dropzone small-drop" id="cadPdfDrop"><div class="big">Arraste o PDF de Clientes/Fornecedores aqui</div><input type="file" id="cadPdfFile" accept="application/pdf"></div>
-    <div id="cadPdfStatus" class="status-line hidden"></div>
   </div>
 
   <footer>Lançamentos Gladius · Cricon Contabilidade — uso interno</footer>
@@ -663,55 +616,36 @@ function removeGrupo(i){ aplicacaoGrupos.splice(i,1); renderGrupos(); }
 let lancRowsState = [];
 let nfRowsState = [];
 
-function gerarLancamentosENF(){
-  lancRowsState = lancRowsState.filter(r=>r.origem==="extrato-geral");
-  nfRowsState = nfRowsState.filter(r=>r.origem!=="resgate");
-  const pendencias = [];
-
+// Aporte/resgate/rendimento da Aplicação Financeira (D/C) — a parte de Nota
+// de Serviço dos resgates fica em gerarNotasFiscais(), mais abaixo.
+function gerarLancamentosAplicacao(){
+  lancRowsState = lancRowsState.filter(r=>r.origem!=="aplicacao");
   aplicacaoGrupos.forEach(g=>{
     const conta = g.contaAplicacao || "????";
     const nome = g.nome || "";
 
-    // Aportes: D conta aplicacao / C 744
     g.aportes.forEach(a=>{
       lancRowsState.push({data:a.data, debito:conta, credito:"744", valor:a.valor,
         hist:`VALOR REF. APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
     });
 
-    // Buckets (mês/título): resgate + irrf + iof, e/ou capitalização (rendimento)
     g.buckets.forEach(b=>{
       const resgates = b.resgates||[];
+      if(!resgates.length) return;
       const totalResgate = resgates.reduce((s,r)=>s+r.valor,0);
-      if(resgates.length){
-        const dataRef = resgates.reduce((max,r)=> (!max || partsToDate(r.data)>partsToDate(max)) ? r.data : max, null);
-        lancRowsState.push({data:dataRef, debito:"744", credito:conta, valor:totalResgate,
-          hist:`VALOR REF. RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
-        if(b.irrf){
-          lancRowsState.push({data:dataRef, debito:"60", credito:conta, valor:b.irrf,
-            hist:`VALOR REF. IRRF SOBRE RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
-        }
-        if(b.iof){
-          lancRowsState.push({data:dataRef, debito:"386", credito:conta, valor:b.iof,
-            hist:`VALOR REF. IOF SOBRE RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
-        }
-        // Nota de Serviço — só para relatórios "carteira" (Posição da Carteira, 1, 2 e 3)
-        if(g.tipo==="carteira" && b.capitalizacao){
-          const base = b.irrf ? (b.irrf/0.15) : 0;
-          const liquido = b.capitalizacao - (b.irrf||0);
-          nfRowsState.push({
-            data: dataRef, nome, cnpj:g.cnpj||"",
-            valorServico: b.capitalizacao, irrf: b.irrf||0, base, liquido,
-            acumulador: document.getElementById("nfAcumulador").value.trim(),
-            cfps: document.getElementById("nfCfps").value.trim(),
-            numeroNF:"", incluir:true, origem:"resgate",
-          });
-        }
-      } else if(b.capitalizacao || b.irrf || b.iof){
-        pendencias.push(`${g.arquivo} — ${b.mes}/${b.ano}: tem capitalização/IRRF/IOF mas nenhum resgate no mês (não gerei lançamento nem NF automaticamente — confira manualmente).`);
+      const dataRef = resgates.reduce((max,r)=> (!max || partsToDate(r.data)>partsToDate(max)) ? r.data : max, null);
+      lancRowsState.push({data:dataRef, debito:"744", credito:conta, valor:totalResgate,
+        hist:`VALOR REF. RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
+      if(b.irrf){
+        lancRowsState.push({data:dataRef, debito:"60", credito:conta, valor:b.irrf,
+          hist:`VALOR REF. IRRF SOBRE RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
+      }
+      if(b.iof){
+        lancRowsState.push({data:dataRef, debito:"386", credito:conta, valor:b.iof,
+          hist:`VALOR REF. IOF SOBRE RESGATE DE APLICACAO ${nome}`, incluir:true, origem:"aplicacao"});
       }
     });
 
-    // Rendimento do período — só relatório Consolidado (Taxa Selic, 1249)
     if(g.tipo==="consolidado" && g.rendimentoPeriodo && g.rendimentoPeriodo.valor){
       const rp = g.rendimentoPeriodo;
       const dataRef = rp.data || (rp.mes&&rp.ano ? lastDayOfMonth(rp.ano, rp.mes) : null);
@@ -720,17 +654,60 @@ function gerarLancamentosENF(){
         hist:`VALOR REF. RENDIMENTO DE APLICACAO ${nome} ${mesLabel}`, incluir:true, origem:"aplicacao"});
     }
   });
-
+}
+function gerarLancamentosManuais(){
+  gerarLancamentosAplicacao();
+  if(extratoGeralState) processarLancamentosExtrato();
   renderLancTable();
+  const st = document.getElementById("lancGeralStatus");
+  st.classList.remove("hidden","err","ok"); st.classList.add("ok");
+  st.textContent = `${lancRowsState.length} lançamento(s) gerados.`;
+}
+
+// Notas Fiscais de Serviço: resgates da Aplicação Financeira + recebimentos
+// do extrato (Alvará/Honorários/Aluguel) — um arquivo só, as duas origens.
+function gerarNotasFiscais(){
+  nfRowsState = [];
+  const pendencias = [];
+  aplicacaoGrupos.forEach(g=>{
+    const nome = g.nome || "";
+    g.buckets.forEach(b=>{
+      const resgates = b.resgates||[];
+      if(!resgates.length){
+        if(b.capitalizacao || b.irrf || b.iof){
+          pendencias.push(`${g.arquivo} — ${b.mes}/${b.ano}: tem capitalização/IRRF/IOF mas nenhum resgate no mês (confira manualmente).`);
+        }
+        return;
+      }
+      if(g.tipo!=="carteira" || !b.capitalizacao) return; // NF só pro relatório Posição da Carteira
+      const dataRef = resgates.reduce((max,r)=> (!max || partsToDate(r.data)>partsToDate(max)) ? r.data : max, null);
+      const base = b.irrf ? (b.irrf/0.15) : 0;
+      const liquido = b.capitalizacao - (b.irrf||0);
+      nfRowsState.push({
+        data: dataRef, nome, cnpj:g.cnpj||"",
+        valorServico: b.capitalizacao, irrf: b.irrf||0, base, liquido,
+        acumulador: document.getElementById("nfAcumulador").value.trim(),
+        cfps: document.getElementById("nfCfps").value.trim(),
+        numeroNF:"", incluir:true, origem:"resgate",
+      });
+    });
+  });
+  if(extratoState){
+    construirAlvaraCandidatos(extratoState).forEach(c=>{
+      nfRowsState.push({data:c.data, nome:c.nome, cnpj:c.cnpj,
+        valorServico:c.valorServico, irrf:0, base:0, liquido:c.valorServico,
+        acumulador:c.acumulador, cfps:c.cfps, numeroNF:"", incluir:c.incluir, origem:"extrato"});
+    });
+  }
   renderNFTable();
-  const st = document.getElementById("gruposStatus");
-  st.classList.remove("hidden");
+  const st = document.getElementById("nfGeralStatus");
+  st.classList.remove("hidden","err","ok");
   if(pendencias.length){
-    st.classList.add("err"); st.classList.remove("ok");
+    st.classList.add("err");
     st.textContent = "Atenção:\n" + pendencias.join("\n");
   }else{
-    st.classList.add("ok"); st.classList.remove("err");
-    st.textContent = `${lancRowsState.length} lançamento(s) e ${nfRowsState.length} nota(s) de serviço gerados.`;
+    st.classList.add("ok");
+    st.textContent = `${nfRowsState.length} nota(s) gerada(s).`;
   }
 }
 
@@ -959,13 +936,6 @@ function aplicarPadrao(p, linha){
 }
 
 let extratoGeralState = null;
-wireDropzone("extratoGeralDrop","extratoGeralFile", async (f,d)=>{
-  try{
-    extratoGeralState = await readExtratoDescricao(f);
-    markDropDone(d, extratoGeralState.length + " lançamento(s) do extrato");
-    document.getElementById("processLancGeralBtn").disabled = false;
-  }catch(err){ alert("Erro ao ler Excel: " + err.message); }
-});
 function processarLancamentosExtrato(){
   window._condCount = {};
   lancRowsState = lancRowsState.filter(r=>r.origem!=="extrato-geral");
@@ -1037,10 +1007,12 @@ renderPadroesTable();
    de Serviço pelo valor da transação (editável, pra casos em que a nota é
    só por uma parte do valor recebido).
    ========================================================================= */
-let alvaraCandidatos = [];
+// Detecta sozinho, no extrato bancário, linhas de recebimento (ou devolução)
+// ligadas a alvará/honorários/aluguel — cada uma vira uma Nota de Serviço
+// pelo valor da transação (editável na tabela final, pra casos em que a
+// nota é só por uma parte do valor recebido). Usado por gerarNotasFiscais().
 function construirAlvaraCandidatos(linhas){
   return linhas
-    .map((l,i)=>({...l, idx:i}))
     .filter(l=> /ALVARA|HONORARIO|ALUGUEL/i.test(normalizeText(l.descricao)))
     .map(l=>({
       data: l.data, descricao: l.descricao, valorTransacao: l.valor,
@@ -1050,60 +1022,6 @@ function construirAlvaraCandidatos(linhas){
       valorServico: Math.abs(l.valor),
       incluir: l.valor > 0,
     }));
-}
-wireDropzone("extratoAlvaraDrop","extratoAlvaraFile", async (f,d)=>{
-  const status = document.getElementById("alvaraStatus");
-  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo extrato...";
-  try{
-    const linhas = await readExtratoDescricao(f);
-    alvaraCandidatos = construirAlvaraCandidatos(linhas);
-    markDropDone(d, alvaraCandidatos.length + " linha(s) encontrada(s)");
-    status.classList.add("ok");
-    status.textContent = alvaraCandidatos.length + ' linha(s) com "Alvará/Honorários/Aluguel" no histórico. Linhas a débito vêm desmarcadas — confira o valor certo da nota antes de marcar.';
-    renderAlvaraTable();
-  }catch(err){
-    status.classList.add("err"); status.textContent = "Erro ao ler Excel: " + err.message;
-  }
-});
-function renderAlvaraTable(){
-  document.getElementById("boxAlvaraTabela").classList.toggle("hidden", !alvaraCandidatos.length);
-  const tbl = document.getElementById("alvaraTable");
-  tbl.innerHTML = `<thead><tr><th></th><th>Data</th><th>Descrição</th><th>Valor Transação</th><th>Valor da Nota</th><th>Cliente</th><th>CNPJ</th><th>Acum.</th><th>CFPS</th></tr></thead><tbody>` +
-    alvaraCandidatos.map((r,i)=>`<tr class="${r.valorTransacao<0?'warn':''}">
-      <td style="text-align:center"><input type="checkbox" ${r.incluir?'checked':''} onchange="updateAlvaraRow(${i},'incluir',this.checked)"></td>
-      <td>${fmtDateBR(r.data)}</td>
-      <td style="max-width:280px;white-space:normal;">${r.descricao}</td>
-      <td class="num">${fmtBRL(r.valorTransacao)}</td>
-      <td class="cell"><input class="cell-input num" value="${fmtBRL(r.valorServico)}" onchange="updateAlvaraRow(${i},'valorServico',this.value)"></td>
-      <td class="cell"><input class="cell-input wide" value="${r.nome||''}" onchange="updateAlvaraRow(${i},'nome',this.value)"></td>
-      <td class="cell"><input class="cell-input wide" value="${r.cnpj||''}" onchange="updateAlvaraRow(${i},'cnpj',this.value)"></td>
-      <td class="cell"><input class="cell-input" style="width:50px" value="${r.acumulador||''}" onchange="updateAlvaraRow(${i},'acumulador',this.value)"></td>
-      <td class="cell"><input class="cell-input" style="width:60px" value="${r.cfps||''}" onchange="updateAlvaraRow(${i},'cfps',this.value)"></td>
-    </tr>`).join("") + "</tbody>";
-}
-function updateAlvaraRow(i, field, val){
-  const r = alvaraCandidatos[i];
-  if(field==="incluir"){ r.incluir = !!val; }
-  else if(field==="valorServico"){ const v=parseBRL(val); if(v!=null) r.valorServico=v; }
-  else if(field==="cnpj"){ r.cnpj = formatCnpjCpf(val); }
-  else { r[field] = val; }
-  renderAlvaraTable();
-}
-function adicionarAlvaraNF(){
-  const incluidas = alvaraCandidatos.filter(r=>r.incluir);
-  if(!incluidas.length){ alert("Nenhuma linha marcada."); return; }
-  incluidas.forEach(r=>{
-    nfRowsState.push({
-      data: r.data, nome: r.nome, cnpj: r.cnpj,
-      valorServico: r.valorServico, irrf: 0, base: 0, liquido: r.valorServico,
-      acumulador: r.acumulador, cfps: r.cfps,
-      numeroNF:"", incluir:true, origem:"extrato",
-    });
-  });
-  renderNFTable();
-  const status = document.getElementById("alvaraStatus");
-  status.classList.remove("err"); status.classList.add("ok");
-  status.textContent = `${incluidas.length} nota(s) adicionada(s) à tabela de Nota de Serviço acima.`;
 }
 
 /* =========================================================================
@@ -1188,11 +1106,17 @@ wireDropzone("contasDrop","contasFile", async (f,d)=>{
     checkBaixaBtn();
   }catch(err){ alert("Erro ao ler PDF: " + err.message); }
 });
+// Extrato bancário único — compartilhado por Baixa de Serviços, Baixa de
+// Entradas, Notas Fiscais (Alvará/Honorários/Aluguel) e Lançamentos Manuais.
+let extratoState = null;
 wireDropzone("extratoDrop","extratoFile", async (f,d)=>{
   try{
-    extratoServicosState = await readExtratoDescricao(f);
-    markDropDone(d, extratoServicosState.length + " lançamento(s) do extrato");
-    checkBaixaBtn();
+    extratoState = await readExtratoDescricao(f);
+    extratoServicosState = extratoState;
+    extratoGeralState = extratoState;
+    extratoEntradasState = extratoState.filter(l=>l.valor<0).map(l=>({data:l.data, descricao:l.descricao, valor:Math.abs(l.valor)}));
+    markDropDone(d, extratoState.length + " lançamento(s) do extrato");
+    checkBaixaBtn(); checkEntradasBtn();
   }catch(err){ alert("Erro ao ler Excel: " + err.message); }
 });
 
@@ -1444,14 +1368,6 @@ wireDropzone("contasPagarDrop","contasPagarFile", async (f,d)=>{
     checkEntradasBtn();
   }catch(err){ alert("Erro ao ler PDF: " + err.message); }
 });
-wireDropzone("extratoEntradasDrop","extratoEntradasFile", async (f,d)=>{
-  try{
-    extratoEntradasState = await readExtratoDebitos(f);
-    markDropDone(d, extratoEntradasState.length + " débito(s) do extrato");
-    checkEntradasBtn();
-  }catch(err){ alert("Erro ao ler Excel: " + err.message); }
-});
-
 let entradasRowsState = [];
 function processarEntradas(){
   const {empresaNome, empresaCnpj, titulos} = contasPagarState;
@@ -1657,90 +1573,6 @@ wireDropzone("cadPdfDrop","cadPdfFile", async (f,d)=>{
   }
 });
 
-/* =========================================================================
-   UPLOAD ÚNICO — reconhece o tipo de cada arquivo sozinho e distribui pras
-   seções certas (Aplicação Financeira, Contas a Receber, Contas a Pagar,
-   Cadastro Clientes/Fornecedores, extrato bancário), depois "Gerar Tudo"
-   roda o processamento de todas as seções carregadas de uma vez.
-   ========================================================================= */
-wireDropzoneMulti("universalDropzone","universalFileInput", async (files, drop)=>{
-  const status = document.getElementById("universalStatus");
-  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo " + files.length + " arquivo(s)...";
-  const resumo = [];
-  for(const f of files){
-    try{
-      if(/\.xlsx?$/i.test(f.name)){
-        const rows = await readExtratoDescricao(f);
-        extratoServicosState = rows;
-        extratoGeralState = rows;
-        extratoEntradasState = rows.filter(l=>l.valor<0).map(l=>({data:l.data, descricao:l.descricao, valor:Math.abs(l.valor)}));
-        alvaraCandidatos = construirAlvaraCandidatos(rows);
-        checkBaixaBtn(); checkEntradasBtn();
-        document.getElementById("processLancGeralBtn").disabled = false;
-        markDropDone(document.getElementById("extratoDrop"), rows.length + " lançamento(s)");
-        markDropDone(document.getElementById("extratoEntradasDrop"), extratoEntradasState.length + " débito(s)");
-        markDropDone(document.getElementById("extratoGeralDrop"), rows.length + " lançamento(s)");
-        markDropDone(document.getElementById("extratoAlvaraDrop"), alvaraCandidatos.length + " linha(s)");
-        renderAlvaraTable();
-        resumo.push(`${f.name}: extrato bancário (${rows.length} lançamentos)`);
-        continue;
-      }
-      const pages = await extractPdfAllLines(f);
-      const allLines = pages.flat();
-      const fullText = allLines.join("\n");
-      if(/CONTAS A RECEBER POR CLIENTE/i.test(fullText)){
-        contasReceberState = await parseContasPdf(f);
-        checkBaixaBtn();
-        markDropDone(document.getElementById("contasDrop"), contasReceberState.titulos.length + " título(s)");
-        resumo.push(`${f.name}: Contas a Receber (${contasReceberState.titulos.length} títulos)`);
-      } else if(/CONTAS A PAGAR POR FORNECEDOR/i.test(fullText)){
-        contasPagarState = await parseContasPdf(f);
-        checkEntradasBtn();
-        markDropDone(document.getElementById("contasPagarDrop"), contasPagarState.titulos.length + " título(s)");
-        resumo.push(`${f.name}: Contas a Pagar (${contasPagarState.titulos.length} títulos)`);
-      } else if(allLines.some(l=>/^FORNECEDORES$/i.test(l.trim())) || allLines.some(l=>/C.digo\s+Nome\s+Raz.o Social/i.test(l))){
-        const msg = await importarCadastroPdf(f);
-        resumo.push(`${f.name}: Cadastro (${msg})`);
-      } else {
-        const tipo = detectarTipoAplicacao(fullText);
-        if(tipo==="carteira" || tipo==="consolidado"){
-          const grupo = tipo==="carteira" ? parseCarteiraPdf(allLines, f.name) : parseConsolidadoPdf(fullText, f.name);
-          if(!grupo) throw new Error("formato de aplicação não reconhecido");
-          grupo.nome = grupo.titulo ? ("APLICACAO "+grupo.titulo) : (grupo.produto || f.name);
-          aplicacaoGrupos.push(grupo);
-          resumo.push(`${f.name}: Aplicação Financeira (${grupo.titulo||grupo.produto})`);
-        } else {
-          throw new Error("tipo de PDF não reconhecido");
-        }
-      }
-    }catch(err){
-      resumo.push(`${f.name}: NÃO RECONHECIDO (${err.message})`);
-    }
-  }
-  if(aplicacaoGrupos.length){ markDropDone(document.getElementById("aplicDropzone"), aplicacaoGrupos.length + " grupo(s)"); renderGrupos(); }
-  markDropDone(drop, files.length + " arquivo(s) processado(s)");
-  status.classList.add("ok");
-  status.textContent = resumo.join("\n");
-  document.getElementById("gerarTudoBtn").disabled = false;
-});
-
-function gerarTudo(){
-  const feito = [];
-  if(aplicacaoGrupos.length){ gerarLancamentosENF(); feito.push("Lançamentos + NF de resgates da Aplicação Financeira"); }
-  if(extratoGeralState){ processarLancamentosExtrato(); feito.push("Lançamentos Contábeis do Extrato Geral"); }
-  if(alvaraCandidatos && alvaraCandidatos.length){ adicionarAlvaraNF(); feito.push("Nota de Serviço dos recebimentos do extrato (Alvará/Honorários/Aluguel)"); }
-  if(contasReceberState && extratoServicosState){ processarBaixaServicos(); feito.push("Baixa de Serviços"); }
-  if(contasPagarState && extratoEntradasState){ processarEntradas(); feito.push("Baixa de Entradas"); }
-  const status = document.getElementById("gerarTudoStatus");
-  status.classList.remove("hidden","err","ok");
-  if(!feito.length){
-    status.classList.add("err");
-    status.textContent = "Nenhuma seção com dados suficientes pra processar ainda — confira os arquivos carregados acima.";
-  }else{
-    status.classList.add("ok");
-    status.textContent = "Gerado: " + feito.join("; ") + ". Role a página pra revisar cada seção antes de exportar.";
-  }
-}
 </script>
 
 <script type="module">
