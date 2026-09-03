@@ -123,6 +123,20 @@ code{background:var(--paper);padding:1px 5px;border-radius:3px;font-family:'IBM 
     </div>
   </div>
 
+  <!-- ===================== UPLOAD ÚNICO — TODOS OS RELATÓRIOS ===================== -->
+  <div class="card" style="border-width:2.5px;">
+    <div class="section-title">Solte todos os relatórios do mês aqui</div>
+    <div class="help">Solte de uma vez: os PDFs de <b>Aplicação Financeira</b> (Posição da Carteira / Consolidado Taxa Selic), <b>Contas a Receber por Cliente</b>, <b>Contas a Pagar por Fornecedor</b>, o relatório de <b>Clientes/Fornecedores</b> (se precisar atualizar o cadastro de CNPJ) e o <b>extrato bancário</b> (Excel) — a ferramenta reconhece sozinha o tipo de cada arquivo e distribui pras seções certas abaixo. Depois clique em <b>Gerar Tudo</b> pra processar tudo de uma vez.</div>
+    <div class="dropzone" id="universalDropzone">
+      <div class="big" id="universalDzBig">Clique ou arraste todos os arquivos aqui</div>
+      <div class="small">PDFs e Excel, quantos quiser, de uma vez</div>
+      <input type="file" id="universalFileInput" accept=".pdf,.xlsx,.xls" multiple>
+    </div>
+    <div id="universalStatus" class="status-line hidden"></div>
+    <div class="btn-row"><button class="btn" id="gerarTudoBtn" disabled onclick="gerarTudo()">Gerar Tudo</button></div>
+    <div id="gerarTudoStatus" class="status-line hidden"></div>
+  </div>
+
   <!-- ===================== APLICAÇÃO FINANCEIRA — UPLOAD ===================== -->
   <div class="card">
     <div class="section-title">Aplicação Financeira SICREDI — Importação</div>
@@ -1024,22 +1038,25 @@ renderPadroesTable();
    só por uma parte do valor recebido).
    ========================================================================= */
 let alvaraCandidatos = [];
+function construirAlvaraCandidatos(linhas){
+  return linhas
+    .map((l,i)=>({...l, idx:i}))
+    .filter(l=> /ALVARA|HONORARIO|ALUGUEL/i.test(normalizeText(l.descricao)))
+    .map(l=>({
+      data: l.data, descricao: l.descricao, valorTransacao: l.valor,
+      nome: l.descricao, cnpj: document.getElementById("alvaraCnpjPadrao").value.trim(),
+      acumulador: document.getElementById("alvaraAcumulador").value.trim(),
+      cfps: document.getElementById("alvaraCfps").value.trim(),
+      valorServico: Math.abs(l.valor),
+      incluir: l.valor > 0,
+    }));
+}
 wireDropzone("extratoAlvaraDrop","extratoAlvaraFile", async (f,d)=>{
   const status = document.getElementById("alvaraStatus");
   status.classList.remove("hidden","err","ok"); status.textContent = "Lendo extrato...";
   try{
     const linhas = await readExtratoDescricao(f);
-    alvaraCandidatos = linhas
-      .map((l,i)=>({...l, idx:i}))
-      .filter(l=> /ALVARA|HONORARIO|ALUGUEL/i.test(normalizeText(l.descricao)))
-      .map(l=>({
-        data: l.data, descricao: l.descricao, valorTransacao: l.valor,
-        nome: l.descricao, cnpj: document.getElementById("alvaraCnpjPadrao").value.trim(),
-        acumulador: document.getElementById("alvaraAcumulador").value.trim(),
-        cfps: document.getElementById("alvaraCfps").value.trim(),
-        valorServico: Math.abs(l.valor),
-        incluir: l.valor > 0,
-      }));
+    alvaraCandidatos = construirAlvaraCandidatos(linhas);
     markDropDone(d, alvaraCandidatos.length + " linha(s) encontrada(s)");
     status.classList.add("ok");
     status.textContent = alvaraCandidatos.length + ' linha(s) com "Alvará/Honorários/Aluguel" no histórico. Linhas a débito vêm desmarcadas — confira o valor certo da nota antes de marcar.';
@@ -1589,52 +1606,141 @@ function parseFornecedoresPdf(allLines){
   return out;
 }
 let cnpjHelperEmpresaCnpj = null;
+async function importarCadastroPdf(f){
+  const pages = await extractPdfAllLines(f);
+  const allLines = pages.flat();
+  const em = allLines.join("\n").match(CNPJ_HEADER_RE);
+  if(em) cnpjHelperEmpresaCnpj = onlyDigits(em[1]);
+  const isFornecedores = allLines.some(l=>/^FORNECEDORES$/i.test(l.trim()));
+  const isClientes = allLines.some(l=>/C.digo\s+Nome\s+Raz.o Social/i.test(l));
+  let parsed = [], tipoTitulo = "cliente";
+  if(isFornecedores){ parsed = parseFornecedoresPdf(allLines); tipoTitulo = "fornecedor"; }
+  else if(isClientes){ parsed = parseClientesPdf(allLines); tipoTitulo = "cliente"; }
+  else {
+    const a = parseFornecedoresPdf(allLines), b = parseClientesPdf(allLines);
+    if(a.length>=b.length){ parsed=a; tipoTitulo="fornecedor"; } else { parsed=b; tipoTitulo="cliente"; }
+  }
+  if(!parsed.length) throw new Error("Não consegui reconhecer nenhum registro nesse PDF.");
+  let addedCli=0, updatedCod=0;
+  const dirty = {};
+  parsed.forEach(p=>{
+    if(!p.documento) return;
+    if(!clientesDB[p.documento]){
+      clientesDB[p.documento] = {documento:p.documento, tipo:p.tipo, razao_social:p.razao_social, endereco:p.endereco, municipio:p.municipio, uf:p.uf, cep:"", codigos:{}, fonte:"importado-lancamentos-gladius"};
+      addedCli++;
+    }
+    if(!clientesDB[p.documento].codigos) clientesDB[p.documento].codigos = {};
+    if(p.codigo && cnpjHelperEmpresaCnpj){
+      const chave = `${cnpjHelperEmpresaCnpj}_${tipoTitulo}`;
+      if(clientesDB[p.documento].codigos[chave] !== p.codigo){
+        clientesDB[p.documento].codigos[chave] = p.codigo;
+        updatedCod++;
+      }
+    }
+    dirty[p.documento] = clientesDB[p.documento];
+  });
+  rebuildCodigoIndex();
+  if(window.gladiusCloud) window.gladiusCloud.pushManyClientes(dirty);
+  return `Cadastro atualizado: ${addedCli} registro(s) novo(s), ${updatedCod} código(s) vinculado(s).`;
+}
 wireDropzone("cadPdfDrop","cadPdfFile", async (f,d)=>{
   const status = document.getElementById("cadPdfStatus");
   status.classList.remove("hidden","err","ok"); status.textContent = "Lendo PDF...";
   try{
-    const pages = await extractPdfAllLines(f);
-    const allLines = pages.flat();
-    const em = allLines.join("\n").match(CNPJ_HEADER_RE);
-    if(em) cnpjHelperEmpresaCnpj = onlyDigits(em[1]);
-    const isFornecedores = allLines.some(l=>/^FORNECEDORES$/i.test(l.trim()));
-    const isClientes = allLines.some(l=>/C.digo\s+Nome\s+Raz.o Social/i.test(l));
-    let parsed = [], tipoTitulo = "cliente";
-    if(isFornecedores){ parsed = parseFornecedoresPdf(allLines); tipoTitulo = "fornecedor"; }
-    else if(isClientes){ parsed = parseClientesPdf(allLines); tipoTitulo = "cliente"; }
-    else {
-      const a = parseFornecedoresPdf(allLines), b = parseClientesPdf(allLines);
-      if(a.length>=b.length){ parsed=a; tipoTitulo="fornecedor"; } else { parsed=b; tipoTitulo="cliente"; }
-    }
-    if(!parsed.length) throw new Error("Não consegui reconhecer nenhum registro nesse PDF.");
-    let addedCli=0, updatedCod=0;
-    const dirty = {};
-    parsed.forEach(p=>{
-      if(!p.documento) return;
-      if(!clientesDB[p.documento]){
-        clientesDB[p.documento] = {documento:p.documento, tipo:p.tipo, razao_social:p.razao_social, endereco:p.endereco, municipio:p.municipio, uf:p.uf, cep:"", codigos:{}, fonte:"importado-lancamentos-gladius"};
-        addedCli++;
-      }
-      if(!clientesDB[p.documento].codigos) clientesDB[p.documento].codigos = {};
-      if(p.codigo && cnpjHelperEmpresaCnpj){
-        const chave = `${cnpjHelperEmpresaCnpj}_${tipoTitulo}`;
-        if(clientesDB[p.documento].codigos[chave] !== p.codigo){
-          clientesDB[p.documento].codigos[chave] = p.codigo;
-          updatedCod++;
-        }
-      }
-      dirty[p.documento] = clientesDB[p.documento];
-    });
-    rebuildCodigoIndex();
-    if(window.gladiusCloud) window.gladiusCloud.pushManyClientes(dirty);
+    const msg = await importarCadastroPdf(f);
     status.classList.add("ok");
-    status.textContent = `Cadastro atualizado: ${addedCli} registro(s) novo(s), ${updatedCod} código(s) vinculado(s). Reprocessando...`;
+    status.textContent = msg + " Reprocessando...";
     if(baixaRowsState.length) processarBaixaServicos();
     if(entradasRowsState.length) processarEntradas();
   }catch(err){
     status.classList.add("err"); status.textContent = "Erro: " + err.message;
   }
 });
+
+/* =========================================================================
+   UPLOAD ÚNICO — reconhece o tipo de cada arquivo sozinho e distribui pras
+   seções certas (Aplicação Financeira, Contas a Receber, Contas a Pagar,
+   Cadastro Clientes/Fornecedores, extrato bancário), depois "Gerar Tudo"
+   roda o processamento de todas as seções carregadas de uma vez.
+   ========================================================================= */
+wireDropzoneMulti("universalDropzone","universalFileInput", async (files, drop)=>{
+  const status = document.getElementById("universalStatus");
+  status.classList.remove("hidden","err","ok"); status.textContent = "Lendo " + files.length + " arquivo(s)...";
+  const resumo = [];
+  for(const f of files){
+    try{
+      if(/\.xlsx?$/i.test(f.name)){
+        const rows = await readExtratoDescricao(f);
+        extratoServicosState = rows;
+        extratoGeralState = rows;
+        extratoEntradasState = rows.filter(l=>l.valor<0).map(l=>({data:l.data, descricao:l.descricao, valor:Math.abs(l.valor)}));
+        alvaraCandidatos = construirAlvaraCandidatos(rows);
+        checkBaixaBtn(); checkEntradasBtn();
+        document.getElementById("processLancGeralBtn").disabled = false;
+        markDropDone(document.getElementById("extratoDrop"), rows.length + " lançamento(s)");
+        markDropDone(document.getElementById("extratoEntradasDrop"), extratoEntradasState.length + " débito(s)");
+        markDropDone(document.getElementById("extratoGeralDrop"), rows.length + " lançamento(s)");
+        markDropDone(document.getElementById("extratoAlvaraDrop"), alvaraCandidatos.length + " linha(s)");
+        renderAlvaraTable();
+        resumo.push(`${f.name}: extrato bancário (${rows.length} lançamentos)`);
+        continue;
+      }
+      const pages = await extractPdfAllLines(f);
+      const allLines = pages.flat();
+      const fullText = allLines.join("\n");
+      if(/CONTAS A RECEBER POR CLIENTE/i.test(fullText)){
+        contasReceberState = await parseContasPdf(f);
+        checkBaixaBtn();
+        markDropDone(document.getElementById("contasDrop"), contasReceberState.titulos.length + " título(s)");
+        resumo.push(`${f.name}: Contas a Receber (${contasReceberState.titulos.length} títulos)`);
+      } else if(/CONTAS A PAGAR POR FORNECEDOR/i.test(fullText)){
+        contasPagarState = await parseContasPdf(f);
+        checkEntradasBtn();
+        markDropDone(document.getElementById("contasPagarDrop"), contasPagarState.titulos.length + " título(s)");
+        resumo.push(`${f.name}: Contas a Pagar (${contasPagarState.titulos.length} títulos)`);
+      } else if(allLines.some(l=>/^FORNECEDORES$/i.test(l.trim())) || allLines.some(l=>/C.digo\s+Nome\s+Raz.o Social/i.test(l))){
+        const msg = await importarCadastroPdf(f);
+        resumo.push(`${f.name}: Cadastro (${msg})`);
+      } else {
+        const tipo = detectarTipoAplicacao(fullText);
+        if(tipo==="carteira" || tipo==="consolidado"){
+          const grupo = tipo==="carteira" ? parseCarteiraPdf(allLines, f.name) : parseConsolidadoPdf(fullText, f.name);
+          if(!grupo) throw new Error("formato de aplicação não reconhecido");
+          grupo.nome = grupo.titulo ? ("APLICACAO "+grupo.titulo) : (grupo.produto || f.name);
+          aplicacaoGrupos.push(grupo);
+          resumo.push(`${f.name}: Aplicação Financeira (${grupo.titulo||grupo.produto})`);
+        } else {
+          throw new Error("tipo de PDF não reconhecido");
+        }
+      }
+    }catch(err){
+      resumo.push(`${f.name}: NÃO RECONHECIDO (${err.message})`);
+    }
+  }
+  if(aplicacaoGrupos.length){ markDropDone(document.getElementById("aplicDropzone"), aplicacaoGrupos.length + " grupo(s)"); renderGrupos(); }
+  markDropDone(drop, files.length + " arquivo(s) processado(s)");
+  status.classList.add("ok");
+  status.textContent = resumo.join("\n");
+  document.getElementById("gerarTudoBtn").disabled = false;
+});
+
+function gerarTudo(){
+  const feito = [];
+  if(aplicacaoGrupos.length){ gerarLancamentosENF(); feito.push("Lançamentos + NF de resgates da Aplicação Financeira"); }
+  if(extratoGeralState){ processarLancamentosExtrato(); feito.push("Lançamentos Contábeis do Extrato Geral"); }
+  if(alvaraCandidatos && alvaraCandidatos.length){ adicionarAlvaraNF(); feito.push("Nota de Serviço dos recebimentos do extrato (Alvará/Honorários/Aluguel)"); }
+  if(contasReceberState && extratoServicosState){ processarBaixaServicos(); feito.push("Baixa de Serviços"); }
+  if(contasPagarState && extratoEntradasState){ processarEntradas(); feito.push("Baixa de Entradas"); }
+  const status = document.getElementById("gerarTudoStatus");
+  status.classList.remove("hidden","err","ok");
+  if(!feito.length){
+    status.classList.add("err");
+    status.textContent = "Nenhuma seção com dados suficientes pra processar ainda — confira os arquivos carregados acima.";
+  }else{
+    status.classList.add("ok");
+    status.textContent = "Gerado: " + feito.join("; ") + ". Role a página pra revisar cada seção antes de exportar.";
+  }
+}
 </script>
 
 <script type="module">
