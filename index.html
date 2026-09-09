@@ -1334,11 +1334,13 @@ function updateBaixaRow(i, field, val){
 }
 function removeBaixaRow(i){ baixaRowsState.splice(i,1); renderResultBaixa(window._baixaCtx.empresaNome, window._baixaCtx.empresaCnpj, window._baixaCtx.semExtrato); }
 
-function baixaRowArray(r){ return [r.numero, onlyDigits(r.cnpj), fmtDateBR(r.vencimento), fmtDateBR(r.databaixa), r.valor, r.juros, r.multa, r.desconto, r.pis, r.cofins, r.csll, r.irrf]; }
+// Série do Documento — coluna exigida pelo Domínio na baixa de serviços, logo após o
+// Número da Nota; é sempre "U", não varia por cliente/nota.
+function baixaRowArray(r){ return [r.numero, "U", onlyDigits(r.cnpj), fmtDateBR(r.vencimento), fmtDateBR(r.databaixa), r.valor, r.juros, r.multa, r.desconto, r.pis, r.cofins, r.csll, r.irrf]; }
 function downloadBaixaXlsx(){
   const rows = baixaRowsState.filter(r=>r.incluir);
   if(!rows.length){ alert("Nenhuma linha marcada."); return; }
-  const header = ["Número da Nota","CNPJ/CPF","Data de Vencimento da Parcela","Data da Baixa da Parcela","Valor Recebido","Valor Juros","Valor Multa","Valor Desconto","Valor PIS","Valor COFINS","Valor CSLL","Valor IRRF"];
+  const header = ["Número da Nota","Série do Documento","CNPJ/CPF","Data de Vencimento da Parcela","Data da Baixa da Parcela","Valor Recebido","Valor Juros","Valor Multa","Valor Desconto","Valor PIS","Valor COFINS","Valor CSLL","Valor IRRF"];
   downloadXlsx("baixa_servicos_gladius.xlsx", [header, ...rows.map(baixaRowArray)], "Baixa");
 }
 function downloadBaixaTxt(){
@@ -1346,7 +1348,7 @@ function downloadBaixaTxt(){
   if(!rows.length){ alert("Nenhuma linha marcada."); return; }
   const naoValidas = rows.filter(r=>!classifyDocumento(r.cnpj).valido);
   if(naoValidas.length && !confirm(`${naoValidas.length} linha(s) com CNPJ/CPF ausente ou inválido. Gerar mesmo assim?`)) return;
-  const lines = rows.map(r=> baixaRowArray(r).map((v,i)=> i>=4 ? fmtValorTxt(v) : v).join(";"));
+  const lines = rows.map(r=> baixaRowArray(r).map((v,i)=> i>=5 ? fmtValorTxt(v) : v).join(";"));
   downloadText("baixa_ser.txt", lines.join("\r\n") + "\r\n");
 }
 
